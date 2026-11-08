@@ -683,9 +683,14 @@ function renderStreamCard(stream) {
 
       <!-- Right: Utility Controls (Reload, Fit, Chat, Web, Fullscreen) -->
       <div class="flex items-center gap-1 sm:gap-1.5 flex-shrink-0">
-        <!-- Fit Toggle (Contain vs Cover) -->
-        <button id="btn-fit-${stream.id}" class="btn-fit p-1 sm:p-1.5 rounded-md bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white transition" title="Ubah Ukuran Video (Fit / Fill)">
-          <i data-lucide="scaling" class="w-3 sm:w-3.5 h-3 sm:h-3.5"></i>
+        <!-- Fit Toggle (Pas Layar IDN vs Asli) -->
+        <button id="btn-fit-${stream.id}" class="btn-fit p-1 sm:p-1.5 rounded-md bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white transition" title="Ubah Ukuran (Penuh IDN / Asli)">
+          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 3 21 3 21 9"></polyline>
+            <polyline points="9 21 3 21 3 15"></polyline>
+            <line x1="21" y1="3" x2="14" y2="10"></line>
+            <line x1="3" y1="21" x2="10" y2="14"></line>
+          </svg>
         </button>
 
         <!-- Real-Time Sync (Live Edge IDN) -->
@@ -993,23 +998,29 @@ function setupCardEvents(stream, card, video) {
     updateCardAudioUI(stream);
   });
 
-  // Fit Toggle (Contain vs Cover / Zoom edge-to-edge)
+  // Fit / Fill Toggle (Cover / Pas Layar IDN vs Contain / Asli)
   card.querySelector(`#btn-fit-${stream.id}`)?.addEventListener('click', () => {
-    stream.fitMode = stream.fitMode === 'contain' ? 'cover' : 'contain';
+    const isMobile = window.innerWidth <= 640;
+    const isContain = video.classList.contains('fit-contain') || (!isMobile && !video.classList.contains('fit-cover'));
     const fitBtn = card.querySelector(`#btn-fit-${stream.id}`);
-    if (stream.fitMode === 'cover') {
+
+    if (isContain) {
+      video.classList.remove('fit-contain');
       video.classList.add('fit-cover');
+      stream.fitMode = 'cover';
       if (fitBtn) {
-        fitBtn.title = 'Ubah ke Mode Normal (Fit)';
-        fitBtn.classList.add('bg-rose-600', 'text-white');
-        fitBtn.classList.remove('bg-slate-800/80', 'text-slate-300');
+        fitBtn.title = 'Ubah ke Mode Proporsi Asli (Fit)';
+        fitBtn.classList.add('text-rose-400');
+        fitBtn.classList.remove('text-slate-300');
       }
     } else {
       video.classList.remove('fit-cover');
+      video.classList.add('fit-contain');
+      stream.fitMode = 'contain';
       if (fitBtn) {
-        fitBtn.title = 'Ubah ke Mode Penuh (Fill / Zoom)';
-        fitBtn.classList.remove('bg-rose-600', 'text-white');
-        fitBtn.classList.add('bg-slate-800/80', 'text-slate-300');
+        fitBtn.title = 'Ubah ke Mode Pas Layar IDN (Penuh Tanpa Bar Hitam)';
+        fitBtn.classList.remove('text-rose-400');
+        fitBtn.classList.add('text-slate-300');
       }
     }
   });
@@ -1380,10 +1391,10 @@ function setLayout(layoutName) {
 function applyLayout(layoutName, count) {
   // Remove all previous layout classes
   grid.className = 'flex-1 w-full h-full gap-2.5 min-h-[70vh] transition-all';
+  grid.setAttribute('data-count', Math.min(count, 9));
 
   if (layoutName === 'auto') {
     grid.classList.add('grid-layout-auto');
-    grid.setAttribute('data-count', Math.min(count, 9));
   } else {
     grid.classList.add(`layout-${layoutName}`);
   }

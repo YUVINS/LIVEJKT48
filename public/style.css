@@ -203,6 +203,10 @@
   object-fit: cover !important;
 }
 
+.stream-video.fit-contain {
+  object-fit: contain !important;
+}
+
 /* Stream Card Header Overlay */
 .stream-card-overlay {
   position: absolute;
@@ -541,9 +545,14 @@
     display: flex !important;
   }
 
-  /* When viewing multi-stream on mobile, hide bulky non-critical buttons to keep controls compact */
-  #stream-grid:not([data-count="1"]) .stream-web-link,
-  #stream-grid:not([data-count="1"]) .btn-chat-toggle {
+  /* Stream Video on Mobile: Default to cover (Fill Penuh Pas Layar IDN - Tanpa Gap Layar Hitam) */
+  .stream-video:not(.fit-contain) {
+    object-fit: cover !important;
+  }
+
+  /* On mobile, hide bulky non-critical buttons to keep controls compact */
+  .stream-web-link,
+  .btn-chat-toggle {
     display: none !important;
   }
 
