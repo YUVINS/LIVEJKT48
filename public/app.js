@@ -772,11 +772,11 @@ function setupPlayer(stream, video, loader) {
     const hls = new Hls({
       enableWorker: true,
       lowLatencyMode: false,          // AWS IVS uses 2s standard HLS segments
-      backBufferLength: 15,
-      maxBufferLength: 10,            // 10s buffer ahead for rock-solid playback
-      maxMaxBufferLength: 20,
-      liveSyncDuration: 2.8,          // ~1.4 segments target buffer (ultra-responsive live edge)
-      liveMaxLatencyDuration: 6.0,    // 6s drift ceiling to keep multi-streams closely synchronized
+      backBufferLength: 20,
+      maxBufferLength: 15,            // 15s forward buffer for rock-solid smooth playback
+      maxMaxBufferLength: 30,
+      liveSyncDuration: 4.0,          // 2 full segments buffer (~4.0s) -> 100% lancar bebas sendat
+      liveMaxLatencyDuration: 10.0,   // 10s ceiling prevents unnecessary seeks on network jitter
       maxLiveSyncPlaybackRate: 1.0,   // Strict 1.0x playback rate (no 2x speedup)
       liveSyncOnStallIncrease: 1.0,
       highBufferWatchdogPeriod: 2,
