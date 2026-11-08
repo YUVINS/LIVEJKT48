@@ -298,10 +298,10 @@
 
   #main-container {
     height: auto !important;
-    min-height: calc(100dvh - 100px) !important;
+    min-height: calc(100dvh - 90px) !important;
     overflow-y: visible !important;
     flex-direction: column !important;
-    padding: 0.5rem !important;
+    padding: 0.5rem 0.5rem 2.5rem 0.5rem !important;
     gap: 0.75rem !important;
   }
 
@@ -316,10 +316,17 @@
   .stream-card {
     width: 100% !important;
     max-width: 440px !important;
-    height: calc(88dvh - 90px) !important;
-    min-height: 420px !important;
+    height: calc(82dvh - 70px) !important;
+    min-height: 380px !important;
+    max-height: 620px !important;
     margin: 0 auto !important;
     border-radius: 1rem !important;
+  }
+
+  /* Compact height when 2-split layout chosen on mobile */
+  .layout-1x2 .stream-card {
+    height: calc(44dvh - 40px) !important;
+    min-height: 240px !important;
   }
 
   .stream-card-overlay {
@@ -330,7 +337,7 @@
   .stream-card-controls {
     opacity: 1 !important;
     padding: 0.45rem 0.6rem !important;
-    background: linear-gradient(to top, rgba(15, 23, 42, 0.95) 0%, rgba(15, 23, 42, 0.6) 80%, transparent 100%) !important;
+    background: linear-gradient(to top, rgba(15, 23, 42, 0.95) 0%, rgba(15, 23, 42, 0.7) 80%, transparent 100%) !important;
   }
 
   #single-companion-panel {

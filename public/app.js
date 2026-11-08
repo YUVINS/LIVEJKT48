@@ -116,6 +116,46 @@ function setupEventListeners() {
   // Chat Drawer Close
   document.getElementById('btn-close-chat')?.addEventListener('click', closeChatDrawer);
 
+  // Mobile Controls & Menu Drawer
+  document.getElementById('btn-mobile-open-add')?.addEventListener('click', () => openModal());
+  document.getElementById('btn-mobile-master-mute')?.addEventListener('click', toggleMasterMute);
+
+  const mobileDrawer = document.getElementById('mobile-menu-drawer');
+  const openMobileMenu = () => {
+    mobileDrawer?.classList.remove('hidden');
+    if (window.lucide) lucide.createIcons({ root: mobileDrawer });
+  };
+  const closeMobileMenu = () => {
+    mobileDrawer?.classList.add('hidden');
+  };
+
+  document.getElementById('btn-mobile-menu')?.addEventListener('click', openMobileMenu);
+  document.getElementById('btn-close-mobile-menu')?.addEventListener('click', closeMobileMenu);
+  mobileDrawer?.addEventListener('click', (e) => {
+    if (e.target === mobileDrawer) closeMobileMenu();
+  });
+
+  document.getElementById('mobile-btn-watch-all')?.addEventListener('click', () => {
+    watchAllLives();
+    closeMobileMenu();
+  });
+  document.getElementById('mobile-btn-refresh')?.addEventListener('click', () => {
+    fetchLives();
+    closeMobileMenu();
+  });
+  document.getElementById('mobile-btn-clear-all')?.addEventListener('click', () => {
+    clearAllStreams();
+    closeMobileMenu();
+  });
+
+  document.querySelectorAll('.mobile-layout-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const layout = btn.getAttribute('data-layout');
+      setLayout(layout);
+      closeMobileMenu();
+    });
+  });
+
   // Companion Sidebar Events
   document.getElementById('btn-toggle-companion')?.addEventListener('click', () => {
     State.companionCollapsed = !State.companionCollapsed;
@@ -187,6 +227,11 @@ async function fetchLives(isBackground = false) {
     // Update Counts
     if (countIdn) countIdn.textContent = countIdnVal;
     if (countSr) countSr.textContent = countSrVal;
+
+    const mobileCount = document.getElementById('mobile-live-count');
+    if (mobileCount) mobileCount.textContent = `${totalCount} Live`;
+    const mobileMenuCount = document.getElementById('mobile-menu-live-count');
+    if (mobileMenuCount) mobileMenuCount.textContent = `${totalCount} Live`;
 
     // Update Live Banner
     if (totalCount > 0) {
@@ -587,75 +632,77 @@ function renderStreamCard(stream) {
       <span class="text-[10px] text-slate-500 mt-0.5">${stream.name}</span>
     </div>
 
-    <!-- Top Overlay (Info & Quick Actions) -->
+    <!-- Top Overlay (Info & Solo/Close) -->
     <div class="stream-card-overlay">
-      <div class="flex items-center gap-2 min-w-0">
+      <div class="flex items-center gap-2 min-w-0 flex-1">
         <div class="w-7 h-7 rounded-full overflow-hidden flex-shrink-0 bg-slate-800 border border-slate-700">
           <img src="${stream.avatar || 'https://via.placeholder.com/60'}" class="w-full h-full object-cover">
         </div>
-        <div class="min-w-0">
-          <div class="flex items-center gap-1.5">
-            <span class="font-bold text-xs text-white truncate max-w-[120px] sm:max-w-[180px]">${stream.name}</span>
+        <div class="min-w-0 flex-1">
+          <div class="flex items-center gap-1.5 min-w-0">
+            <span class="font-bold text-xs text-white truncate max-w-[130px] sm:max-w-[200px]">${stream.name}</span>
             ${platformBadge}
           </div>
-          ${stream.title ? `<p class="text-[10px] text-slate-400 truncate max-w-[160px]">${stream.title}</p>` : ''}
+          ${stream.title ? `<p class="text-[10px] text-slate-400 truncate max-w-[140px] sm:max-w-[220px]">${stream.title}</p>` : ''}
         </div>
       </div>
 
-      <!-- Action Buttons -->
-      <div class="flex items-center gap-1">
+      <!-- Action Buttons: Solo & Close only for collision-free top overlay -->
+      <div class="flex items-center gap-1.5 flex-shrink-0">
         <!-- Solo Audio Button -->
-        <button id="btn-solo-${stream.id}" class="btn-solo flex items-center gap-1 px-2 py-1 rounded-md text-[11px] font-semibold transition ${
-          stream.id === State.soloStreamId ? 'bg-emerald-600 text-white' : 'bg-slate-800/80 hover:bg-slate-700 text-slate-300'
-        }" title="Solo Audio: Dengarkan stream ini saja (mute yang lain)">
+        <button id="btn-solo-${stream.id}" class="btn-solo flex items-center gap-1 px-2 py-1 rounded-lg text-[11px] font-semibold transition ${
+          stream.id === State.soloStreamId ? 'bg-emerald-600 text-white shadow-sm shadow-emerald-500/50' : 'bg-slate-800/90 hover:bg-slate-700 text-slate-300'
+        }" title="Solo Audio: Dengarkan stream ini saja">
           <i data-lucide="headphones" class="w-3.5 h-3.5"></i>
           <span class="hidden sm:inline">Solo</span>
         </button>
 
-        <!-- Live Chat Toggle -->
-        ${stream.room_id || stream.platform === 'showroom' ? `
-          <button id="btn-chat-${stream.id}" class="p-1.5 rounded-md bg-slate-800/80 hover:bg-slate-700 text-slate-300 transition" title="Buka Live Chat">
-            <i data-lucide="message-square" class="w-3.5 h-3.5"></i>
-          </button>
-        ` : ''}
-
-        <!-- Fit Toggle (Contain vs Cover) -->
-        <button id="btn-fit-${stream.id}" class="p-1.5 rounded-md bg-slate-800/80 hover:bg-slate-700 text-slate-300 transition" title="Ubah Ukuran Video (Fit / Fill)">
-          <i data-lucide="scaling" class="w-3.5 h-3.5"></i>
-        </button>
-
-        <!-- Reload Stream -->
-        <button id="btn-reload-${stream.id}" class="p-1.5 rounded-md bg-slate-800/80 hover:bg-slate-700 text-slate-300 transition" title="Muat Ulang Stream">
-          <i data-lucide="rotate-cw" class="w-3.5 h-3.5"></i>
-        </button>
-
         <!-- Close Stream -->
-        <button id="btn-close-${stream.id}" class="p-1.5 rounded-md bg-slate-800/80 hover:bg-rose-600 text-slate-300 hover:text-white transition" title="Tutup Layar Ini">
+        <button id="btn-close-${stream.id}" class="p-1.5 rounded-lg bg-slate-800/90 hover:bg-rose-600 text-slate-300 hover:text-white transition" title="Tutup Layar Ini">
           <i data-lucide="x" class="w-3.5 h-3.5"></i>
         </button>
       </div>
     </div>
 
-    <!-- Bottom Overlay (Volume & Fullscreen Controls) -->
+    <!-- Bottom Overlay (Volume & Utility Controls) -->
     <div class="stream-card-controls">
-      <div class="flex items-center gap-2">
+      <!-- Left: Audio Controls -->
+      <div class="flex items-center gap-1.5 flex-shrink-0">
         <!-- Mute Button -->
-        <button id="btn-mute-${stream.id}" class="p-1 text-slate-300 hover:text-white">
-          <i data-lucide="${stream.isMuted ? 'volume-x' : 'volume-2'}" class="w-4 h-4"></i>
+        <button id="btn-mute-${stream.id}" class="p-1.5 rounded-md bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white transition" title="Mute/Unmute">
+          <i data-lucide="${stream.isMuted ? 'volume-x' : 'volume-2'}" class="w-3.5 h-3.5"></i>
         </button>
         <!-- Volume Slider -->
-        <input type="range" id="vol-${stream.id}" min="0" max="1" step="0.05" value="${stream.isMuted ? 0 : stream.volume}" class="w-16 h-1 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-rose-500">
+        <input type="range" id="vol-${stream.id}" min="0" max="1" step="0.05" value="${stream.isMuted ? 0 : stream.volume}" class="w-14 sm:w-20 h-1 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-rose-500">
       </div>
 
-      <div class="flex items-center gap-2">
+      <!-- Right: Utility Controls (Reload, Fit, Chat, Web, Fullscreen) -->
+      <div class="flex items-center gap-1 sm:gap-1.5 flex-shrink-0">
+        <!-- Fit Toggle (Contain vs Cover) -->
+        <button id="btn-fit-${stream.id}" class="p-1.5 rounded-md bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white transition" title="Ubah Ukuran Video (Fit / Fill)">
+          <i data-lucide="scaling" class="w-3.5 h-3.5"></i>
+        </button>
+
+        <!-- Reload Stream -->
+        <button id="btn-reload-${stream.id}" class="p-1.5 rounded-md bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white transition" title="Muat Ulang Stream">
+          <i data-lucide="rotate-cw" class="w-3.5 h-3.5"></i>
+        </button>
+
+        <!-- Live Chat Toggle (If available) -->
+        ${stream.room_id || stream.platform === 'showroom' ? `
+          <button id="btn-chat-${stream.id}" class="p-1.5 rounded-md bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white transition" title="Buka Live Chat">
+            <i data-lucide="message-square" class="w-3.5 h-3.5"></i>
+          </button>
+        ` : ''}
+
         ${stream.page_url ? `
-          <a href="${stream.page_url}" target="_blank" rel="noopener noreferrer" class="text-[10px] text-slate-400 hover:text-rose-400 flex items-center gap-1 transition">
-            <span>Buka Web</span>
-            <i data-lucide="external-link" class="w-3 h-3"></i>
+          <a href="${stream.page_url}" target="_blank" rel="noopener noreferrer" class="p-1.5 rounded-md bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-rose-400 transition" title="Buka di Website Asli">
+            <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
           </a>
         ` : ''}
+
         <!-- Per Card Fullscreen -->
-        <button id="btn-card-fs-${stream.id}" class="p-1 text-slate-300 hover:text-white" title="Layar Penuh untuk stream ini">
+        <button id="btn-card-fs-${stream.id}" class="p-1.5 rounded-md bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white transition" title="Layar Penuh">
           <i data-lucide="maximize-2" class="w-3.5 h-3.5"></i>
         </button>
       </div>
@@ -918,6 +965,7 @@ function toggleSoloAudio(streamId) {
 function toggleMasterMute() {
   State.masterMuted = !State.masterMuted;
   const icon = document.getElementById('icon-master-mute');
+  const iconMobile = document.getElementById('icon-mobile-master-mute');
 
   State.activeStreams.forEach(stream => {
     if (stream.video) {
@@ -926,10 +974,10 @@ function toggleMasterMute() {
     updateCardAudioUI(stream);
   });
 
-  if (icon) {
-    icon.setAttribute('data-lucide', State.masterMuted ? 'volume-x' : 'volume-2');
-    if (window.lucide) lucide.createIcons();
-  }
+  const iconName = State.masterMuted ? 'volume-x' : 'volume-2';
+  if (icon) icon.setAttribute('data-lucide', iconName);
+  if (iconMobile) iconMobile.setAttribute('data-lucide', iconName);
+  if (window.lucide) lucide.createIcons();
 }
 
 /**
