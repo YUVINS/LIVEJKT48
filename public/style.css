@@ -33,6 +33,13 @@
   display: none !important;
 }
 
+#empty-state {
+  height: 100%;
+  max-height: 100%;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
 /* Auto Grid dynamic classes */
 .grid-layout-auto[data-count="1"] {
   display: flex !important;
@@ -323,10 +330,15 @@
   #empty-state {
     width: 100% !important;
     max-width: 100% !important;
-    margin: 0 auto !important;
-    padding: 1rem 0.5rem 3rem 0.5rem !important;
-    overflow-y: auto !important;
+    height: 100% !important;
     max-height: 100% !important;
+    margin: 0 auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    padding: 1rem 0.5rem 3.5rem 0.5rem !important;
+    overflow-y: auto !important;
     -webkit-overflow-scrolling: touch;
   }
 
