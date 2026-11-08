@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JKT48 Multi-View Live — IDN Live & SHOWROOM</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220%22%20width=%22100%22%20height=%22100%22><text y=%22.9em%22 font-size=%2290%22>🔴</text></svg>">
+
+  <!-- Tailwind CSS & Lucide Icons -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- HLS.js for Live Streaming -->
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.8/dist/hls.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            jkt: {
+              red: '#e11d48',
+              crimson: '#be123c',
+              dark: '#0f172a',
+              card: '#1e293b',
+              border: '#334155'
+            },
+            idn: '#f43f5e',
+            sr: '#0ea5e9'
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-slate-950 text-slate-100 h-screen overflow-hidden flex flex-col font-sans selection:bg-rose-500 selection:text-white">
+
+  <!-- Top Navigation Bar -->
+  <header class="sticky top-0 z-40 bg-slate-900/90 backdrop-blur-md border-b border-slate-800 px-4 py-2.5 flex flex-wrap items-center justify-between gap-3 shadow-lg">
+    <div class="flex items-center gap-3">
+      <!-- Logo & Title -->
+      <div class="flex items-center gap-2.5">
+        <div class="relative flex items-center justify-center w-9 h-9 rounded-xl bg-gradient-to-tr from-rose-600 to-pink-500 shadow-md shadow-rose-600/30 font-black text-white text-lg tracking-wider">
+          48
+          <span class="absolute -top-1 -right-1 flex h-3 w-3">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-3 w-3 bg-rose-500 border-2 border-slate-900"></span>
+          </span>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="font-bold text-base md:text-lg tracking-tight bg-gradient-to-r from-white via-rose-100 to-rose-400 bg-clip-text text-transparent">
+              JKT48 Multi-View
+            </h1>
+            <span class="text-[10px] font-semibold uppercase px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-300 border border-rose-500/30">
+              Live
+            </span>
+          </div>
+          <p class="text-xs text-slate-400 hidden sm:block">IDN Live & SHOWROOM Multi-Screen Player</p>
+        </div>
+      </div>
+
+      <!-- Quick Platform Live Count Badges -->
+      <div class="flex items-center gap-1.5 text-xs ml-2 sm:ml-4">
+        <span id="badge-idn-count" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-rose-950/60 border border-rose-800/50 text-rose-300 font-medium cursor-pointer hover:bg-rose-900/50 transition" title="Filter IDN Live">
+          <span class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
+          IDN: <span id="count-idn" class="font-bold text-white">0</span>
+        </span>
+        <span id="badge-sr-count" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-sky-950/60 border border-sky-800/50 text-sky-300 font-medium cursor-pointer hover:bg-sky-900/50 transition" title="Filter SHOWROOM">
+          <span class="w-2 h-2 rounded-full bg-sky-500 animate-pulse"></span>
+          SR: <span id="count-sr" class="font-bold text-white">0</span>
+        </span>
+      </div>
+    </div>
+
+    <!-- Active Live Avatars Quick Carousel -->
+    <div id="live-members-carousel" class="hidden lg:flex items-center gap-2 overflow-x-auto max-w-md py-1 px-2 bg-slate-950/60 rounded-xl border border-slate-800/60">
+      <span class="text-xs text-slate-400 whitespace-nowrap pl-1">Live Now:</span>
+      <div id="live-members-avatars" class="flex items-center gap-1.5">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+
+    <!-- Right Controls -->
+    <div class="flex items-center gap-2">
+      <!-- Layout Preset Switcher -->
+      <div class="relative">
+        <button id="btn-layout-dropdown" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-medium text-slate-200 border border-slate-700 transition">
+          <i data-lucide="layout-grid" class="w-4 h-4 text-rose-400"></i>
+          <span id="label-layout" class="hidden sm:inline">Layout: Auto</span>
+          <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400"></i>
+        </button>
+        <!-- Dropdown menu -->
+        <div id="menu-layout" class="hidden absolute right-0 mt-1 w-44 rounded-xl bg-slate-900 border border-slate-800 shadow-2xl py-1 z-50 text-xs">
+          <button data-layout="auto" class="layout-opt w-full text-left px-3 py-2 hover:bg-slate-800 flex items-center justify-between text-slate-200">
+            <span>Auto Grid</span>
+            <span class="text-[10px] text-slate-400">Otomatis</span>
+          </button>
+          <button data-layout="1x1" class="layout-opt w-full text-left px-3 py-2 hover:bg-slate-800 flex items-center justify-between text-slate-200">
+            <span>1 Layar (1x1)</span>
+            <span class="text-[10px] text-slate-400">Fokus</span>
+          </button>
+          <button data-layout="1x2" class="layout-opt w-full text-left px-3 py-2 hover:bg-slate-800 flex items-center justify-between text-slate-200">
+            <span>2 Layar (Split)</span>
+            <span class="text-[10px] text-slate-400">1 x 2</span>
+          </button>
+          <button data-layout="3-focus" class="layout-opt w-full text-left px-3 py-2 hover:bg-slate-800 flex items-center justify-between text-slate-200">
+            <span>3 Layar (1 Utama)</span>
+            <span class="text-[10px] text-slate-400">T-Grid</span>
+          </button>
+          <button data-layout="2x2" class="layout-opt w-full text-left px-3 py-2 hover:bg-slate-800 flex items-center justify-between text-slate-200">
+            <span>4 Layar (2x2)</span>
+            <span class="text-[10px] text-slate-400">Quad</span>
+          </button>
+          <button data-layout="3x2" class="layout-opt w-full text-left px-3 py-2 hover:bg-slate-800 flex items-center justify-between text-slate-200">
+            <span>6 Layar (3x2)</span>
+            <span class="text-[10px] text-slate-400">Wall</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Quick Tonton Semua -->
+      <button id="btn-watch-all" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-500 active:scale-95 text-xs font-semibold text-white shadow-md shadow-rose-600/30 transition">
+        <i data-lucide="play" class="w-3.5 h-3.5 fill-current"></i>
+        <span class="hidden md:inline">Tonton Semua Live</span>
+        <span class="md:hidden">Semua</span>
+      </button>
+
+      <!-- Tambah Stream Manual -->
+      <button id="btn-open-add" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-medium text-slate-200 border border-slate-700 transition">
+        <i data-lucide="plus-circle" class="w-4 h-4 text-emerald-400"></i>
+        <span class="hidden sm:inline">Pilih Stream</span>
+      </button>
+
+      <!-- Master Audio Toggle -->
+      <button id="btn-master-mute" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition" title="Mute/Unmute Semua Audio">
+        <i data-lucide="volume-2" id="icon-master-mute" class="w-4 h-4 text-rose-400"></i>
+      </button>
+
+      <!-- Refresh Status -->
+      <button id="btn-refresh" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition" title="Refresh Live Status">
+        <i data-lucide="rotate-cw" id="icon-refresh" class="w-4 h-4"></i>
+      </button>
+
+      <!-- Fullscreen Grid -->
+      <button id="btn-fullscreen" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition" title="Layar Penuh (F11)">
+        <i data-lucide="maximize" class="w-4 h-4"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- Live Member Notification Banner (Shown when live is detected) -->
+  <div id="live-alert-bar" class="bg-gradient-to-r from-rose-950 via-slate-900 to-sky-950 border-b border-rose-900/30 px-4 py-2 flex items-center justify-between text-xs text-slate-300 transition-all">
+    <div class="flex items-center gap-2 overflow-hidden">
+      <span class="flex h-2.5 w-2.5 relative flex-shrink-0">
+        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+        <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-rose-500"></span>
+      </span>
+      <span id="live-alert-text" class="font-medium text-slate-200 truncate">
+        Memeriksa live stream JKT48...
+      </span>
+    </div>
+    <div class="flex items-center gap-3 flex-shrink-0 ml-2">
+      <button id="btn-clear-all" class="text-slate-400 hover:text-rose-400 transition underline text-[11px]">
+        Tutup Semua Layar
+      </button>
+    </div>
+  </div>
+
+  <!-- Main Multi-View Grid Container -->
+  <main id="main-container" class="flex-1 min-h-0 relative p-2 sm:p-2.5 overflow-hidden bg-slate-950 flex flex-row items-center justify-center gap-3">
+    <!-- Grid Element -->
+    <div id="stream-grid" class="grid-layout-auto flex-1 w-full h-full min-h-0 min-w-0 gap-2.5">
+      <!-- Stream Cards will be inserted here dynamically -->
+    </div>
+
+    <!-- Single Stream Companion Sidebar (Shown when exactly 1 stream is active) -->
+    <aside id="single-companion-panel" class="hidden flex-col w-80 md:w-96 h-full bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-2xl flex-shrink-0 transition-all z-20">
+      <!-- Header -->
+      <div class="p-3.5 border-b border-slate-800 bg-slate-950 flex items-center justify-between gap-2">
+        <div class="flex items-center gap-2.5 min-w-0">
+          <div class="relative w-8 h-8 rounded-full overflow-hidden flex-shrink-0 bg-slate-800 border border-slate-700">
+            <img id="companion-avatar" src="" class="w-full h-full object-cover">
+          </div>
+          <div class="min-w-0">
+            <div class="flex items-center gap-1.5">
+              <span id="companion-name" class="font-bold text-xs text-white truncate">Member JKT48</span>
+              <span id="companion-platform-badge" class="px-1.5 py-0.2 rounded text-[9px] font-bold uppercase badge-idn">IDN</span>
+            </div>
+            <p id="companion-title" class="text-[10px] text-slate-400 truncate">Sedang Live</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-1 flex-shrink-0">
+          <button id="btn-toggle-companion" class="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition" title="Sembunyikan Panel Samping">
+            <i data-lucide="panel-right-close" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Live Stats Strip -->
+      <div class="px-3.5 py-2 bg-slate-950/60 border-b border-slate-800/80 flex items-center justify-between text-[11px] text-slate-300">
+        <div class="flex items-center gap-1.5">
+          <span class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
+          <span class="font-medium text-emerald-400" id="companion-viewers">● 0 penonton</span>
+        </div>
+        <a id="companion-link" href="#" target="_blank" rel="noopener noreferrer" class="text-rose-400 hover:underline flex items-center gap-1 text-[10px]">
+          <span>Buka di Web Resmi</span>
+          <i data-lucide="external-link" class="w-3 h-3"></i>
+        </a>
+      </div>
+
+      <!-- Tabs: Chat & Member Lain -->
+      <div class="flex border-b border-slate-800 text-xs font-semibold bg-slate-900 px-3 pt-2 gap-2">
+        <button id="companion-tab-chat-btn" class="px-3 py-1.5 border-b-2 border-rose-500 text-rose-400 flex items-center gap-1.5">
+          <i data-lucide="message-square" class="w-3.5 h-3.5"></i>
+          Live Chat
+        </button>
+        <button id="companion-tab-other-btn" class="px-3 py-1.5 border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-1.5">
+          <i data-lucide="radio" class="w-3.5 h-3.5 text-rose-500"></i>
+          Live Lainnya (<span id="companion-other-count">0</span>)
+        </button>
+      </div>
+
+      <!-- Tab Contents -->
+      <div class="flex-1 overflow-y-auto p-3 flex flex-col min-h-0">
+        <!-- Chat Tab -->
+        <div id="companion-chat-content" class="flex-1 flex flex-col space-y-2 overflow-y-auto text-xs min-h-0">
+          <p class="text-slate-500 text-center py-4">Memuat chat...</p>
+        </div>
+
+        <!-- Other Lives Tab -->
+        <div id="companion-other-content" class="hidden flex-1 space-y-2.5 overflow-y-auto min-h-0">
+          <!-- Other live streams list -->
+        </div>
+      </div>
+    </aside>
+
+    <!-- Empty State (Shown when no stream is in grid) -->
+    <div id="empty-state" class="flex-1 flex flex-col items-center justify-center p-6 text-center max-w-xl mx-auto my-auto py-12">
+      <div class="w-20 h-20 rounded-2xl bg-gradient-to-tr from-rose-600/20 to-sky-600/20 border border-rose-500/30 flex items-center justify-center mb-5 shadow-2xl shadow-rose-950/50">
+        <i data-lucide="tv" class="w-10 h-10 text-rose-400"></i>
+      </div>
+      <h2 class="text-xl sm:text-2xl font-bold text-white mb-2">Belum Ada Stream yang Aktif di Layar</h2>
+      <p class="text-sm text-slate-400 mb-6">
+        Pilih member JKT48 yang sedang live di bawah ini untuk mulai menonton multi-stream secara bersamaan.
+      </p>
+
+      <!-- Active lives cards in empty state -->
+      <div id="empty-state-lives" class="w-full grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
+        <!-- Rendered by JS -->
+      </div>
+
+      <div class="flex flex-wrap items-center justify-center gap-3">
+        <button id="btn-empty-add-all" class="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 font-semibold text-white text-xs sm:text-sm flex items-center gap-2 shadow-lg shadow-rose-600/30 transition">
+          <i data-lucide="play" class="w-4 h-4 fill-current"></i>
+          Buka Semua yang Sedang Live
+        </button>
+        <button id="btn-empty-open-modal" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 font-medium text-slate-200 text-xs sm:text-sm border border-slate-700 flex items-center gap-2 transition">
+          <i data-lucide="list-plus" class="w-4 h-4 text-emerald-400"></i>
+          Pilih dari Daftar Member
+        </button>
+      </div>
+
+      <!-- Feature Highlights -->
+      <div class="grid grid-cols-3 gap-4 mt-10 pt-8 border-t border-slate-800/80 w-full text-left text-xs text-slate-400">
+        <div class="flex items-start gap-2">
+          <i data-lucide="headphones" class="w-4 h-4 text-rose-400 flex-shrink-0 mt-0.5"></i>
+          <div>
+            <span class="font-semibold text-slate-200 block">Solo Audio Focus</span>
+            Klik ikon headset pada player untuk dengarkan 1 member tanpa tabrakan suara.
+          </div>
+        </div>
+        <div class="flex items-start gap-2">
+          <i data-lucide="layout" class="w-4 h-4 text-sky-400 flex-shrink-0 mt-0.5"></i>
+          <div>
+            <span class="font-semibold text-slate-200 block">Multi Layout</span>
+            Bebas atur tampilan 2, 3, 4, 6 layar hingga custom grid otomatis.
+          </div>
+        </div>
+        <div class="flex items-start gap-2">
+          <i data-lucide="zap" class="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5"></i>
+          <div>
+            <span class="font-semibold text-slate-200 block">Bypass CORS</span>
+            Streaming lancar untuk IDN Live maupun SHOWROOM HLS m3u8.
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Modal: Tambah Stream / Pilih Member -->
+  <div id="modal-add" class="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-2xl overflow-hidden shadow-2xl flex flex-col max-h-[85vh] animate-in fade-in zoom-in-95 duration-150">
+      
+      <!-- Modal Header -->
+      <div class="px-5 py-4 border-b border-slate-800 flex items-center justify-between bg-slate-950/50">
+        <div class="flex items-center gap-2.5">
+          <div class="p-2 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-400">
+            <i data-lucide="tv-2" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-base text-white">Tambah Stream ke Multi-View</h3>
+            <p class="text-xs text-slate-400">Pilih live yang sedang aktif atau cari member JKT48</p>
+          </div>
+        </div>
+        <button id="btn-close-modal" class="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Modal Tabs -->
+      <div class="flex border-b border-slate-800 text-xs font-medium bg-slate-900/50 px-5 gap-2 pt-2">
+        <button id="tab-btn-live" class="tab-btn active px-4 py-2 border-b-2 border-rose-500 text-rose-400 font-semibold flex items-center gap-1.5">
+          <span class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
+          Sedang Live (<span id="tab-live-count">0</span>)
+        </button>
+        <button id="tab-btn-members" class="tab-btn px-4 py-2 border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-1.5">
+          <i data-lucide="users" class="w-3.5 h-3.5"></i>
+          Semua Member JKT48
+        </button>
+        <button id="tab-btn-custom" class="tab-btn px-4 py-2 border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-1.5">
+          <i data-lucide="link" class="w-3.5 h-3.5"></i>
+          Custom URL / Room ID
+        </button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="p-5 flex-1 overflow-y-auto">
+        <!-- Tab 1: Sedang Live -->
+        <div id="tab-pane-live" class="tab-pane">
+          <div id="modal-live-list" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <!-- Rendered by JS -->
+          </div>
+          <div id="modal-live-empty" class="hidden text-center py-10 text-slate-400 text-xs">
+            <i data-lucide="radio" class="w-8 h-8 mx-auto text-slate-500 mb-2"></i>
+            Saat ini tidak ada member JKT48 yang sedang live. Anda bisa mencoba tab <strong>Semua Member</strong> atau <strong>Custom URL</strong>.
+          </div>
+        </div>
+
+        <!-- Tab 2: Roster Member -->
+        <div id="tab-pane-members" class="tab-pane hidden">
+          <div class="mb-3">
+            <div class="relative">
+              <i data-lucide="search" class="w-4 h-4 absolute left-3 top-3 text-slate-400"></i>
+              <input type="text" id="input-search-member" placeholder="Cari nama member (misal: Freya, Christy, Gracia)..." class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-9 pr-4 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-rose-500">
+            </div>
+          </div>
+          <div id="modal-member-roster" class="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-80 overflow-y-auto pr-1">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+
+        <!-- Tab 3: Custom URL -->
+        <div id="tab-pane-custom" class="tab-pane hidden">
+          <p class="text-xs text-slate-400 mb-3">
+            Masukkan link live stream IDN, SHOWROOM URL, Room ID, atau direct .m3u8:
+          </p>
+          <div class="space-y-3">
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-1">URL atau Room ID:</label>
+              <input type="text" id="input-custom-url" placeholder="https://www.idn.app/... atau https://www.showroom-live.com/JKT48_Freya" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-rose-500">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-1">Nama Tampilan (Opsional):</label>
+              <input type="text" id="input-custom-name" placeholder="Nama Member / Label Layar" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-rose-500">
+            </div>
+            <button id="btn-submit-custom" class="w-full py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-semibold text-xs transition flex items-center justify-center gap-2">
+              <i data-lucide="plus" class="w-4 h-4"></i>
+              Tambah Stream ke Grid
+            </button>
+            <div id="custom-error" class="text-xs text-rose-400 hidden"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="px-5 py-3 border-t border-slate-800 bg-slate-950/50 flex items-center justify-between text-xs text-slate-400">
+        <span>Tips: Gunakan mode <strong>Solo Audio</strong> untuk mendengar audio satu per satu.</span>
+        <button id="btn-close-modal-footer" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200">
+          Tutup
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Live Chat Drawer / Modal -->
+  <div id="chat-drawer" class="fixed right-0 top-0 bottom-0 w-80 max-w-full bg-slate-900 border-l border-slate-800 z-50 shadow-2xl flex flex-col transform translate-x-full transition-transform duration-200">
+    <div class="p-3 border-b border-slate-800 flex items-center justify-between bg-slate-950">
+      <div class="flex items-center gap-2">
+        <i data-lucide="message-square" class="w-4 h-4 text-sky-400"></i>
+        <h4 id="chat-title" class="font-bold text-xs text-white">Live Chat</h4>
+      </div>
+      <button id="btn-close-chat" class="p-1 rounded text-slate-400 hover:text-white">
+        <i data-lucide="x" class="w-4 h-4"></i>
+      </button>
+    </div>
+    <div id="chat-messages" class="flex-1 p-3 overflow-y-auto space-y-2 text-xs">
+      <p class="text-slate-500 text-center py-4">Memuat chat...</p>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

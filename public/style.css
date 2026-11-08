@@ -1,0 +1,274 @@
+/* Custom styles for JKT48 Multi-View */
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.8);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(71, 85, 105, 0.6);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.8);
+}
+
+/* Base Stream Grid Layout */
+#stream-grid {
+  display: grid;
+  width: 100%;
+  height: 100%;
+  max-height: 100%;
+  min-height: 0;
+  min-width: 0;
+  transition: all 0.3s ease;
+}
+
+/* Auto Grid dynamic classes */
+.grid-layout-auto[data-count="1"] {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.grid-layout-auto[data-count="1"] .stream-card {
+  max-width: 480px !important;
+  width: 100% !important;
+  height: 100% !important;
+  margin: 0 auto !important;
+}
+
+.grid-layout-auto[data-count="2"] {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: minmax(0, 1fr);
+}
+@media (max-width: 640px) {
+  .grid-layout-auto[data-count="2"] {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.grid-layout-auto[data-count="3"] {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-rows: minmax(0, 1fr);
+}
+@media (max-width: 768px) {
+  .grid-layout-auto[data-count="3"] {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.grid-layout-auto[data-count="4"] {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+}
+
+.grid-layout-auto[data-count="5"],
+.grid-layout-auto[data-count="6"] {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+}
+@media (max-width: 1024px) {
+  .grid-layout-auto[data-count="5"],
+  .grid-layout-auto[data-count="6"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.grid-layout-auto[data-count="7"],
+.grid-layout-auto[data-count="8"],
+.grid-layout-auto[data-count="9"] {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-rows: repeat(3, minmax(0, 1fr));
+}
+
+/* Forced Layout Presets */
+.layout-1x1 {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.layout-1x1 .stream-card {
+  max-width: 480px !important;
+  width: 100% !important;
+  height: 100% !important;
+  margin: 0 auto !important;
+}
+
+.layout-1x2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  grid-template-rows: minmax(0, 1fr) !important;
+}
+@media (max-width: 640px) {
+  .layout-1x2 {
+    grid-template-columns: minmax(0, 1fr) !important;
+    grid-template-rows: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+.layout-3-focus {
+  display: grid !important;
+  grid-template-columns: 2fr minmax(0, 1fr) !important;
+  grid-template-rows: repeat(2, minmax(0, 1fr)) !important;
+}
+.layout-3-focus > div:first-child {
+  grid-row: span 2;
+}
+
+.layout-2x2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  grid-template-rows: repeat(2, minmax(0, 1fr)) !important;
+}
+
+.layout-3x2 {
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  grid-template-rows: repeat(2, minmax(0, 1fr)) !important;
+}
+
+/* Stream Card Styling */
+.stream-card {
+  position: relative;
+  background-color: #000;
+  border-radius: 0.85rem;
+  overflow: hidden;
+  border: 1px solid rgba(51, 65, 85, 0.7);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 0;
+  min-width: 0;
+  height: 100%;
+  max-height: 100%;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.stream-card:hover {
+  border-color: rgba(225, 29, 72, 0.5);
+}
+
+/* Audio Solo Active Glow */
+.stream-card.audio-active {
+  border-color: #10b981;
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.25);
+}
+
+.stream-card.audio-active .audio-badge-solo {
+  background-color: #10b981;
+  color: white;
+}
+
+/* Stream Video Player Element */
+.stream-video {
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  background-color: #000;
+  display: block;
+}
+
+.stream-video.fit-cover {
+  object-fit: cover !important;
+}
+
+/* Stream Card Header Overlay */
+.stream-card-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to bottom, rgba(15, 23, 42, 0.95) 0%, rgba(15, 23, 42, 0.5) 70%, transparent 100%);
+  padding: 0.6rem 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  z-index: 10;
+  opacity: 0.95;
+  transition: opacity 0.2s ease;
+}
+
+.stream-card:hover .stream-card-overlay {
+  opacity: 1;
+}
+
+/* Stream Card Bottom Control Overlay */
+.stream-card-controls {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to top, rgba(15, 23, 42, 0.95) 0%, rgba(15, 23, 42, 0.5) 70%, transparent 100%);
+  padding: 0.5rem 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  z-index: 10;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.stream-card:hover .stream-card-controls {
+  opacity: 1;
+}
+
+/* Loading buffer spinner */
+.video-loader {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(11, 15, 25, 0.75);
+  backdrop-filter: blur(4px);
+  z-index: 5;
+  transition: opacity 0.3s ease;
+}
+
+.video-loader.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Platform Badges */
+.badge-idn {
+  background: linear-gradient(135deg, #f43f5e, #e11d48);
+  color: white;
+}
+
+.badge-sr {
+  background: linear-gradient(135deg, #0284c7, #0ea5e9);
+  color: white;
+}
+
+/* Fullscreen support */
+:fullscreen .stream-card {
+  border-radius: 0;
+}
+
+/* Companion Panel */
+#single-companion-panel {
+  max-height: 100%;
+}
+
+@media (max-width: 768px) {
+  #single-companion-panel {
+    display: none !important;
+  }
+}

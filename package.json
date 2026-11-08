@@ -1,0 +1,17 @@
+{
+  "name": "jkt48-multiview",
+  "version": "1.0.0",
+  "description": "Multi-View Live Streaming Web for JKT48 IDN Live & SHOWROOM",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": ["jkt48", "multiview", "idn-live", "showroom"],
+  "author": "Antigravity",
+  "license": "MIT",
+  "dependencies": {
+    "compression": "^1.8.0",
+    "cors": "^2.8.5",
+    "express": "^4.21.2"
+  }
+}
