@@ -27,6 +27,12 @@
   transition: all 0.3s ease;
 }
 
+#stream-grid.hidden,
+#empty-state.hidden,
+#single-companion-panel.hidden {
+  display: none !important;
+}
+
 /* Auto Grid dynamic classes */
 .grid-layout-auto[data-count="1"] {
   display: flex !important;
@@ -308,6 +314,20 @@
     height: 100% !important;
     min-height: 0 !important;
     gap: 0.35rem !important;
+  }
+
+  #stream-grid.hidden {
+    display: none !important;
+  }
+
+  #empty-state {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 auto !important;
+    padding: 1rem 0.5rem 3rem 0.5rem !important;
+    overflow-y: auto !important;
+    max-height: 100% !important;
+    -webkit-overflow-scrolling: touch;
   }
 
   /* Single Stream on Mobile: Centered, fits height */
