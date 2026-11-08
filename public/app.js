@@ -89,8 +89,9 @@ function setupEventListeners() {
   // Fullscreen
   document.getElementById('btn-fullscreen')?.addEventListener('click', toggleFullscreen);
 
-  // Clear all
+  // Clear all & Sync all
   document.getElementById('btn-clear-all')?.addEventListener('click', clearAllStreams);
+  document.getElementById('btn-sync-all')?.addEventListener('click', syncAllStreams);
 
   // Modal Open/Close
   const modal = document.getElementById('modal-add');
@@ -141,6 +142,10 @@ function setupEventListeners() {
   });
   document.getElementById('mobile-btn-refresh')?.addEventListener('click', () => {
     fetchLives();
+    closeMobileMenu();
+  });
+  document.getElementById('mobile-btn-sync-all')?.addEventListener('click', () => {
+    syncAllStreams();
     closeMobileMenu();
   });
   document.getElementById('mobile-btn-clear-all')?.addEventListener('click', () => {
@@ -770,8 +775,8 @@ function setupPlayer(stream, video, loader) {
       backBufferLength: 15,
       maxBufferLength: 10,            // 10s buffer ahead for rock-solid playback
       maxMaxBufferLength: 20,
-      liveSyncDuration: 3.5,          // ~1.7 segments target buffer (smooth & low latency)
-      liveMaxLatencyDuration: 8.0,    // 8s drift ceiling to avoid constant seeking
+      liveSyncDuration: 2.8,          // ~1.4 segments target buffer (ultra-responsive live edge)
+      liveMaxLatencyDuration: 6.0,    // 6s drift ceiling to keep multi-streams closely synchronized
       maxLiveSyncPlaybackRate: 1.0,   // Strict 1.0x playback rate (no 2x speedup)
       liveSyncOnStallIncrease: 1.0,
       highBufferWatchdogPeriod: 2,
@@ -1056,6 +1061,18 @@ function removeStream(streamId) {
 /**
  * Clear All Streams
  */
+/**
+ * Synchronize All Active Streams to Live Edge Simultaneously
+ */
+function syncAllStreams() {
+  if (State.activeStreams.length === 0) return;
+  State.activeStreams.forEach(stream => {
+    if (stream.card && stream.video) {
+      syncStreamToRealtime(stream, stream.card, stream.video);
+    }
+  });
+}
+
 function clearAllStreams() {
   State.activeStreams.forEach(stream => {
     if (stream.hls) stream.hls.destroy();

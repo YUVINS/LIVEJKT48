@@ -185,8 +185,12 @@
         Memeriksa live stream JKT48...
       </span>
     </div>
-    <div class="flex items-center gap-3 flex-shrink-0 ml-2">
-      <button id="btn-clear-all" class="text-slate-400 hover:text-rose-400 transition underline text-[11px]">
+    <div class="flex items-center gap-2 sm:gap-3 flex-shrink-0 ml-2">
+      <button id="btn-sync-all" class="text-rose-300 hover:text-white transition flex items-center gap-1 text-[10px] sm:text-[11px] font-semibold bg-rose-950/70 hover:bg-rose-900/80 px-2 sm:px-2.5 py-1 rounded-lg border border-rose-800/60 shadow-sm" title="Sinkronkan detik semua layar yang sedang aktif">
+        <i data-lucide="zap" class="w-3 h-3 text-rose-400"></i>
+        <span>Sinkron Semua</span>
+      </button>
+      <button id="btn-clear-all" class="text-slate-400 hover:text-rose-400 transition underline text-[10px] sm:text-[11px] whitespace-nowrap">
         Tutup Semua Layar
       </button>
     </div>
@@ -449,6 +453,11 @@
             Tonton Semua yang Sedang Live
           </span>
           <span id="mobile-menu-live-count" class="px-2 py-0.5 rounded-full bg-rose-900/60 text-[10px] font-bold">Live</span>
+        </button>
+
+        <button id="mobile-btn-sync-all" class="w-full flex items-center gap-2.5 p-3.5 rounded-2xl bg-rose-950/40 border border-rose-800/60 hover:bg-rose-900/40 text-rose-300 font-semibold transition text-xs shadow-md">
+          <i data-lucide="zap" class="w-4 h-4 text-rose-400"></i>
+          Sinkronkan Detik Semua Layar (Cegah Gema)
         </button>
 
         <button id="mobile-btn-refresh" class="w-full flex items-center gap-2.5 p-3.5 rounded-2xl bg-slate-950 border border-slate-800 hover:bg-slate-800 text-slate-200 font-medium transition text-xs">
