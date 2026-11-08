@@ -49,8 +49,8 @@
 }
 @media (max-width: 640px) {
   .grid-layout-auto[data-count="2"] {
-    grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    grid-template-rows: minmax(0, 1fr) !important;
   }
 }
 
@@ -112,8 +112,8 @@
 }
 @media (max-width: 640px) {
   .layout-1x2 {
-    grid-template-columns: minmax(0, 1fr) !important;
-    grid-template-rows: repeat(2, minmax(0, 1fr)) !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    grid-template-rows: minmax(0, 1fr) !important;
   }
 }
 
@@ -290,54 +290,106 @@
 /* Smartphone Portrait & Small Screens (<= 640px) */
 @media (max-width: 640px) {
   body {
-    height: auto !important;
-    min-height: 100dvh !important;
-    overflow-y: auto !important;
-    -webkit-overflow-scrolling: touch;
+    height: 100dvh !important;
+    overflow: hidden !important;
   }
 
   #main-container {
-    height: auto !important;
-    min-height: calc(100dvh - 90px) !important;
-    overflow-y: visible !important;
-    flex-direction: column !important;
-    padding: 0.5rem 0.5rem 2.5rem 0.5rem !important;
-    gap: 0.75rem !important;
+    height: calc(100dvh - 86px) !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+    padding: 0.35rem !important;
+    gap: 0.35rem !important;
   }
 
   #stream-grid {
-    display: flex !important;
-    flex-direction: column !important;
-    height: auto !important;
+    display: grid !important;
     width: 100% !important;
-    gap: 0.85rem !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    gap: 0.35rem !important;
+  }
+
+  /* Single Stream on Mobile: Centered, fits height */
+  .grid-layout-auto[data-count="1"],
+  .layout-1x1 {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    width: 100% !important;
+    height: 100% !important;
+  }
+  .grid-layout-auto[data-count="1"] .stream-card,
+  .layout-1x1 .stream-card {
+    max-width: 440px !important;
+    width: 100% !important;
+    height: 100% !important;
+    margin: 0 auto !important;
+  }
+
+  /* 2 Streams on Mobile: MENYAMPING (2 Columns Side-by-Side) */
+  .grid-layout-auto[data-count="2"],
+  .layout-1x2 {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    grid-template-rows: minmax(0, 1fr) !important;
+  }
+
+  /* 3 Streams on Mobile: Menyamping 2 Kolom (1 Utama + 2) */
+  .grid-layout-auto[data-count="3"],
+  .layout-3-focus {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    grid-template-rows: repeat(2, minmax(0, 1fr)) !important;
+  }
+  .grid-layout-auto[data-count="3"] > div:first-child,
+  .layout-3-focus > div:first-child {
+    grid-row: span 2 !important;
+  }
+
+  /* 4 Streams on Mobile: 2x2 Grid (Menyamping) */
+  .grid-layout-auto[data-count="4"],
+  .layout-2x2 {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    grid-template-rows: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  /* 5 or 6 Streams on Mobile: 2 Columns Grid */
+  .grid-layout-auto[data-count="5"],
+  .grid-layout-auto[data-count="6"],
+  .layout-3x2 {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    grid-template-rows: repeat(3, minmax(0, 1fr)) !important;
   }
 
   .stream-card {
     width: 100% !important;
-    max-width: 440px !important;
-    height: calc(82dvh - 70px) !important;
-    min-height: 380px !important;
-    max-height: 620px !important;
-    margin: 0 auto !important;
-    border-radius: 1rem !important;
-  }
-
-  /* Compact height when 2-split layout chosen on mobile */
-  .layout-1x2 .stream-card {
-    height: calc(44dvh - 40px) !important;
-    min-height: 240px !important;
+    height: 100% !important;
+    max-width: none !important;
+    min-height: 0 !important;
+    max-height: 100% !important;
+    margin: 0 !important;
+    border-radius: 0.75rem !important;
   }
 
   .stream-card-overlay {
     opacity: 1 !important;
-    padding: 0.45rem 0.6rem !important;
+    padding: 0.35rem 0.5rem !important;
   }
 
   .stream-card-controls {
     opacity: 1 !important;
-    padding: 0.45rem 0.6rem !important;
+    padding: 0.35rem 0.5rem !important;
     background: linear-gradient(to top, rgba(15, 23, 42, 0.95) 0%, rgba(15, 23, 42, 0.7) 80%, transparent 100%) !important;
+  }
+
+  /* When viewing 2+ streams side-by-side on mobile, hide bulky controls to keep layout clean */
+  #stream-grid:not([data-count="1"]) .stream-vol-slider,
+  #stream-grid:not([data-count="1"]) .btn-fit,
+  #stream-grid:not([data-count="1"]) .stream-web-link {
+    display: none !important;
   }
 
   #single-companion-panel {

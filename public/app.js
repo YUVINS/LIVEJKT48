@@ -634,32 +634,32 @@ function renderStreamCard(stream) {
 
     <!-- Top Overlay (Info & Solo/Close) -->
     <div class="stream-card-overlay">
-      <div class="flex items-center gap-2 min-w-0 flex-1">
-        <div class="w-7 h-7 rounded-full overflow-hidden flex-shrink-0 bg-slate-800 border border-slate-700">
+      <div class="flex items-center gap-1.5 min-w-0 flex-1">
+        <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-full overflow-hidden flex-shrink-0 bg-slate-800 border border-slate-700">
           <img src="${stream.avatar || 'https://via.placeholder.com/60'}" class="w-full h-full object-cover">
         </div>
         <div class="min-w-0 flex-1">
-          <div class="flex items-center gap-1.5 min-w-0">
-            <span class="font-bold text-xs text-white truncate max-w-[130px] sm:max-w-[200px]">${stream.name}</span>
+          <div class="flex items-center gap-1 min-w-0">
+            <span class="font-bold text-xs text-white truncate max-w-[75px] sm:max-w-[200px]">${stream.name}</span>
             ${platformBadge}
           </div>
-          ${stream.title ? `<p class="text-[10px] text-slate-400 truncate max-w-[140px] sm:max-w-[220px]">${stream.title}</p>` : ''}
+          ${stream.title ? `<p class="text-[9px] sm:text-[10px] text-slate-400 truncate max-w-[75px] sm:max-w-[220px]">${stream.title}</p>` : ''}
         </div>
       </div>
 
       <!-- Action Buttons: Solo & Close only for collision-free top overlay -->
-      <div class="flex items-center gap-1.5 flex-shrink-0">
+      <div class="flex items-center gap-1 sm:gap-1.5 flex-shrink-0">
         <!-- Solo Audio Button -->
-        <button id="btn-solo-${stream.id}" class="btn-solo flex items-center gap-1 px-2 py-1 rounded-lg text-[11px] font-semibold transition ${
+        <button id="btn-solo-${stream.id}" class="btn-solo flex items-center gap-1 px-1.5 sm:px-2 py-1 rounded-lg text-[10px] sm:text-[11px] font-semibold transition ${
           stream.id === State.soloStreamId ? 'bg-emerald-600 text-white shadow-sm shadow-emerald-500/50' : 'bg-slate-800/90 hover:bg-slate-700 text-slate-300'
         }" title="Solo Audio: Dengarkan stream ini saja">
-          <i data-lucide="headphones" class="w-3.5 h-3.5"></i>
+          <i data-lucide="headphones" class="w-3 sm:w-3.5 h-3 sm:h-3.5"></i>
           <span class="hidden sm:inline">Solo</span>
         </button>
 
         <!-- Close Stream -->
-        <button id="btn-close-${stream.id}" class="p-1.5 rounded-lg bg-slate-800/90 hover:bg-rose-600 text-slate-300 hover:text-white transition" title="Tutup Layar Ini">
-          <i data-lucide="x" class="w-3.5 h-3.5"></i>
+        <button id="btn-close-${stream.id}" class="p-1 sm:p-1.5 rounded-lg bg-slate-800/90 hover:bg-rose-600 text-slate-300 hover:text-white transition" title="Tutup Layar Ini">
+          <i data-lucide="x" class="w-3 sm:w-3.5 h-3 sm:h-3.5"></i>
         </button>
       </div>
     </div>
@@ -667,24 +667,24 @@ function renderStreamCard(stream) {
     <!-- Bottom Overlay (Volume & Utility Controls) -->
     <div class="stream-card-controls">
       <!-- Left: Audio Controls -->
-      <div class="flex items-center gap-1.5 flex-shrink-0">
+      <div class="flex items-center gap-1 sm:gap-1.5 flex-shrink-0">
         <!-- Mute Button -->
-        <button id="btn-mute-${stream.id}" class="p-1.5 rounded-md bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white transition" title="Mute/Unmute">
+        <button id="btn-mute-${stream.id}" class="p-1 sm:p-1.5 rounded-md bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white transition" title="Mute/Unmute">
           <i data-lucide="${stream.isMuted ? 'volume-x' : 'volume-2'}" class="w-3.5 h-3.5"></i>
         </button>
         <!-- Volume Slider -->
-        <input type="range" id="vol-${stream.id}" min="0" max="1" step="0.05" value="${stream.isMuted ? 0 : stream.volume}" class="w-14 sm:w-20 h-1 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-rose-500">
+        <input type="range" id="vol-${stream.id}" min="0" max="1" step="0.05" value="${stream.isMuted ? 0 : stream.volume}" class="stream-vol-slider w-14 sm:w-20 h-1 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-rose-500">
       </div>
 
       <!-- Right: Utility Controls (Reload, Fit, Chat, Web, Fullscreen) -->
       <div class="flex items-center gap-1 sm:gap-1.5 flex-shrink-0">
         <!-- Fit Toggle (Contain vs Cover) -->
-        <button id="btn-fit-${stream.id}" class="p-1.5 rounded-md bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white transition" title="Ubah Ukuran Video (Fit / Fill)">
-          <i data-lucide="scaling" class="w-3.5 h-3.5"></i>
+        <button id="btn-fit-${stream.id}" class="btn-fit p-1 sm:p-1.5 rounded-md bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white transition" title="Ubah Ukuran Video (Fit / Fill)">
+          <i data-lucide="scaling" class="w-3 sm:w-3.5 h-3 sm:h-3.5"></i>
         </button>
 
         <!-- Real-Time Sync (Live Edge IDN) -->
-        <button id="btn-reload-${stream.id}" class="btn-sync-live flex items-center gap-1 px-2 py-1 rounded-md bg-rose-950/70 hover:bg-rose-900/80 border border-rose-800/50 hover:border-rose-600 text-[10px] font-semibold text-rose-200 transition shadow-sm" title="Sinkronkan Real-Time persis seperti IDN">
+        <button id="btn-reload-${stream.id}" class="btn-sync-live flex items-center gap-1 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-md bg-rose-950/70 hover:bg-rose-900/80 border border-rose-800/50 hover:border-rose-600 text-[9px] sm:text-[10px] font-semibold text-rose-200 transition shadow-sm" title="Sinkronkan Real-Time persis seperti IDN">
           <span class="btn-sync-dot w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse"></span>
           <span class="btn-sync-label font-bold text-rose-300">Live</span>
           <i data-lucide="rotate-cw" class="w-2.5 h-2.5 text-rose-400 opacity-70"></i>
@@ -692,20 +692,20 @@ function renderStreamCard(stream) {
 
         <!-- Live Chat Toggle (If available) -->
         ${stream.room_id || stream.platform === 'showroom' ? `
-          <button id="btn-chat-${stream.id}" class="p-1.5 rounded-md bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white transition" title="Buka Live Chat">
-            <i data-lucide="message-square" class="w-3.5 h-3.5"></i>
+          <button id="btn-chat-${stream.id}" class="btn-chat-toggle p-1 sm:p-1.5 rounded-md bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white transition" title="Buka Live Chat">
+            <i data-lucide="message-square" class="w-3 sm:w-3.5 h-3 sm:h-3.5"></i>
           </button>
         ` : ''}
 
         ${stream.page_url ? `
-          <a href="${stream.page_url}" target="_blank" rel="noopener noreferrer" class="p-1.5 rounded-md bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-rose-400 transition" title="Buka di Website Asli">
-            <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+          <a href="${stream.page_url}" target="_blank" rel="noopener noreferrer" class="stream-web-link p-1 sm:p-1.5 rounded-md bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-rose-400 transition" title="Buka di Website Asli">
+            <i data-lucide="external-link" class="w-3 sm:w-3.5 h-3 sm:h-3.5"></i>
           </a>
         ` : ''}
 
         <!-- Per Card Fullscreen -->
-        <button id="btn-card-fs-${stream.id}" class="p-1.5 rounded-md bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white transition" title="Layar Penuh">
-          <i data-lucide="maximize-2" class="w-3.5 h-3.5"></i>
+        <button id="btn-card-fs-${stream.id}" class="p-1 sm:p-1.5 rounded-md bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white transition" title="Layar Penuh">
+          <i data-lucide="maximize-2" class="w-3 sm:w-3.5 h-3 sm:h-3.5"></i>
         </button>
       </div>
     </div>
