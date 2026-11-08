@@ -272,3 +272,92 @@
     display: none !important;
   }
 }
+
+/* ============================================================
+   Responsive Mobile & Tablet Optimization
+   ============================================================ */
+
+/* Touch Device Interactions (Mobile & Tablet) */
+@media (hover: none) and (pointer: coarse) {
+  .stream-card-overlay {
+    opacity: 1 !important;
+  }
+  .stream-card-controls {
+    opacity: 0.95 !important;
+  }
+}
+
+/* Smartphone Portrait & Small Screens (<= 640px) */
+@media (max-width: 640px) {
+  body {
+    height: auto !important;
+    min-height: 100dvh !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  #main-container {
+    height: auto !important;
+    min-height: calc(100dvh - 100px) !important;
+    overflow-y: visible !important;
+    flex-direction: column !important;
+    padding: 0.5rem !important;
+    gap: 0.75rem !important;
+  }
+
+  #stream-grid {
+    display: flex !important;
+    flex-direction: column !important;
+    height: auto !important;
+    width: 100% !important;
+    gap: 0.85rem !important;
+  }
+
+  .stream-card {
+    width: 100% !important;
+    max-width: 440px !important;
+    height: calc(88dvh - 90px) !important;
+    min-height: 420px !important;
+    margin: 0 auto !important;
+    border-radius: 1rem !important;
+  }
+
+  .stream-card-overlay {
+    opacity: 1 !important;
+    padding: 0.45rem 0.6rem !important;
+  }
+
+  .stream-card-controls {
+    opacity: 1 !important;
+    padding: 0.45rem 0.6rem !important;
+    background: linear-gradient(to top, rgba(15, 23, 42, 0.95) 0%, rgba(15, 23, 42, 0.6) 80%, transparent 100%) !important;
+  }
+
+  #single-companion-panel {
+    display: none !important;
+  }
+}
+
+/* Tablets (641px - 1024px) */
+@media (min-width: 641px) and (max-width: 1024px) {
+  body {
+    height: 100dvh !important;
+    overflow: hidden !important;
+  }
+
+  #main-container {
+    padding: 0.5rem !important;
+  }
+
+  .stream-card {
+    min-height: 0 !important;
+  }
+
+  .stream-card-overlay {
+    opacity: 1 !important;
+  }
+
+  .stream-card-controls {
+    opacity: 0.95 !important;
+  }
+}

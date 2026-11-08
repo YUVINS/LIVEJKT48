@@ -684,9 +684,19 @@ function setupPlayer(stream, video, loader) {
   video.muted = stream.isMuted || State.masterMuted;
   video.volume = stream.volume;
 
+  // Enforce steady 1.0x normal playback rate (prevent 2x catch-up speed)
+  video.defaultPlaybackRate = 1.0;
+  video.playbackRate = 1.0;
+  video.addEventListener('ratechange', () => {
+    if (video.playbackRate !== 1.0) {
+      video.playbackRate = 1.0;
+    }
+  });
+
   // Hide loader when playing
   video.addEventListener('playing', () => {
     loader?.classList.add('hidden');
+    video.playbackRate = 1.0;
   });
 
   video.addEventListener('waiting', () => {
@@ -696,17 +706,18 @@ function setupPlayer(stream, video, loader) {
   if (Hls.isSupported()) {
     const hls = new Hls({
       enableWorker: true,
-      lowLatencyMode: true,
+      lowLatencyMode: false,        // Disable aggressive catchup mode
       backBufferLength: 30,
-      maxLiveSyncPlaybackRate: 1.5,
+      maxLiveSyncPlaybackRate: 1.0, // Strictly lock to 1.0x normal speed (never 1.5x / 2.0x)
       liveSyncDuration: 3,
-      liveMaxLatencyDuration: 6
+      liveMaxLatencyDuration: 10
     });
 
     hls.loadSource(stream.stream_url);
     hls.attachMedia(video);
 
     hls.on(Hls.Events.MANIFEST_PARSED, () => {
+      video.playbackRate = 1.0;
       video.play().catch(e => {
         console.warn('Autoplay prevented, stream muted:', e);
         video.muted = true;
@@ -740,7 +751,13 @@ function setupPlayer(stream, video, loader) {
     // Native HLS (Safari/iOS)
     video.src = stream.stream_url;
     video.addEventListener('loadedmetadata', () => {
-      video.play();
+      video.playbackRate = 1.0;
+      video.play().catch(() => {
+        video.muted = true;
+        stream.isMuted = true;
+        updateCardAudioUI(stream);
+        video.play();
+      });
     });
   }
 }
