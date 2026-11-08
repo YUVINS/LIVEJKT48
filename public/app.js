@@ -982,16 +982,35 @@ function setupCardEvents(stream, card, video) {
       stream.isMuted = false;
       video.muted = false;
     }
+    if (val > 0 && State.masterMuted) {
+      State.masterMuted = false;
+      const icon = document.getElementById('icon-master-mute');
+      const iconMobile = document.getElementById('icon-mobile-master-mute');
+      if (icon) icon.setAttribute('data-lucide', 'volume-2');
+      if (iconMobile) iconMobile.setAttribute('data-lucide', 'volume-2');
+      if (window.lucide) lucide.createIcons();
+    }
     updateCardAudioUI(stream);
   });
 
-  // Fit Toggle
+  // Fit Toggle (Contain vs Cover / Zoom edge-to-edge)
   card.querySelector(`#btn-fit-${stream.id}`)?.addEventListener('click', () => {
     stream.fitMode = stream.fitMode === 'contain' ? 'cover' : 'contain';
+    const fitBtn = card.querySelector(`#btn-fit-${stream.id}`);
     if (stream.fitMode === 'cover') {
       video.classList.add('fit-cover');
+      if (fitBtn) {
+        fitBtn.title = 'Ubah ke Mode Normal (Fit)';
+        fitBtn.classList.add('bg-rose-600', 'text-white');
+        fitBtn.classList.remove('bg-slate-800/80', 'text-slate-300');
+      }
     } else {
       video.classList.remove('fit-cover');
+      if (fitBtn) {
+        fitBtn.title = 'Ubah ke Mode Penuh (Fill / Zoom)';
+        fitBtn.classList.remove('bg-rose-600', 'text-white');
+        fitBtn.classList.add('bg-slate-800/80', 'text-slate-300');
+      }
     }
   });
 
@@ -1347,7 +1366,8 @@ function setLayout(layoutName) {
     const names = {
       'auto': 'Layout: Auto',
       '1x1': 'Layout: 1x1',
-      '1x2': 'Layout: 1x2',
+      '1x2': 'Layout: 1x2 (Samping)',
+      '2x1': 'Layout: 2x1 (Atas-Bawah)',
       '3-focus': 'Layout: 3 (T-Grid)',
       '2x2': 'Layout: 2x2',
       '3x2': 'Layout: 3x2'

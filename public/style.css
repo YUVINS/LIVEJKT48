@@ -130,6 +130,11 @@
   }
 }
 
+.layout-2x1 {
+  grid-template-columns: minmax(0, 1fr) !important;
+  grid-template-rows: repeat(2, minmax(0, 1fr)) !important;
+}
+
 .layout-3-focus {
   display: grid !important;
   grid-template-columns: 2fr minmax(0, 1fr) !important;
@@ -359,24 +364,60 @@
     margin: 0 auto !important;
   }
 
-  /* 2 Streams on Mobile: MENYAMPING (2 Columns Side-by-Side) */
+  /* 2 Streams on Mobile: MENYAMPING (2 Columns Side-by-Side with Proper 9:15 Ratio) */
   .grid-layout-auto[data-count="2"],
   .layout-1x2 {
-    display: grid !important;
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-    grid-template-rows: minmax(0, 1fr) !important;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0.35rem !important;
+    height: 100% !important;
+    width: 100% !important;
   }
 
-  /* 3 Streams on Mobile: Menyamping 2 Kolom (1 Utama + 2) */
+  .grid-layout-auto[data-count="2"] .stream-card,
+  .layout-1x2 .stream-card {
+    flex: 1 1 0 !important;
+    width: calc(50% - 0.2rem) !important;
+    max-width: 50% !important;
+    height: auto !important;
+    max-height: clamp(300px, 62dvh, 480px) !important;
+    aspect-ratio: 9 / 15 !important;
+    align-self: center !important;
+    margin: auto 0 !important;
+  }
+
+  /* 2 Streams on Mobile: ATAS - BAWAH (Stack) */
+  .layout-2x1 {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    grid-template-rows: repeat(2, minmax(0, 1fr)) !important;
+    gap: 0.35rem !important;
+    height: 100% !important;
+    width: 100% !important;
+  }
+
+  .layout-2x1 .stream-card {
+    width: 100% !important;
+    height: 100% !important;
+    max-height: 100% !important;
+    margin: 0 auto !important;
+    aspect-ratio: unset !important;
+  }
+
+  /* 3 Streams on Mobile: 1 Top Banner + 2 Bottom Side-by-Side */
   .grid-layout-auto[data-count="3"],
   .layout-3-focus {
     display: grid !important;
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
     grid-template-rows: repeat(2, minmax(0, 1fr)) !important;
+    gap: 0.35rem !important;
   }
   .grid-layout-auto[data-count="3"] > div:first-child,
   .layout-3-focus > div:first-child {
-    grid-row: span 2 !important;
+    grid-column: span 2 !important;
+    grid-row: span 1 !important;
   }
 
   /* 4 Streams on Mobile: 2x2 Grid (Menyamping) */
@@ -385,6 +426,7 @@
     display: grid !important;
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
     grid-template-rows: repeat(2, minmax(0, 1fr)) !important;
+    gap: 0.35rem !important;
   }
 
   /* 5 or 6 Streams on Mobile: 2 Columns Grid */
@@ -394,6 +436,7 @@
     display: grid !important;
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
     grid-template-rows: repeat(3, minmax(0, 1fr)) !important;
+    gap: 0.35rem !important;
   }
 
   .stream-card {
@@ -413,15 +456,38 @@
 
   .stream-card-controls {
     opacity: 1 !important;
-    padding: 0.35rem 0.5rem !important;
-    background: linear-gradient(to top, rgba(15, 23, 42, 0.95) 0%, rgba(15, 23, 42, 0.7) 80%, transparent 100%) !important;
+    padding: 0.25rem 0.35rem !important;
+    gap: 0.2rem !important;
+    background: linear-gradient(to top, rgba(15, 23, 42, 0.95) 0%, rgba(15, 23, 42, 0.75) 80%, transparent 100%) !important;
   }
 
-  /* When viewing 2+ streams side-by-side on mobile, hide bulky controls to keep layout clean */
-  #stream-grid:not([data-count="1"]) .stream-vol-slider,
-  #stream-grid:not([data-count="1"]) .btn-fit,
-  #stream-grid:not([data-count="1"]) .stream-web-link {
+  .stream-vol-slider {
+    display: block !important;
+    width: 36px !important;
+    height: 4px !important;
+    accent-color: #f43f5e;
+    cursor: pointer;
+    padding: 4px 0 !important;
+  }
+  @media (min-width: 400px) {
+    .stream-vol-slider {
+      width: 46px !important;
+    }
+  }
+
+  .btn-fit {
+    display: flex !important;
+  }
+
+  /* When viewing multi-stream on mobile, hide bulky non-critical buttons to keep controls compact */
+  #stream-grid:not([data-count="1"]) .stream-web-link,
+  #stream-grid:not([data-count="1"]) .btn-chat-toggle {
     display: none !important;
+  }
+
+  .btn-sync-live {
+    padding: 0.15rem 0.35rem !important;
+    font-size: 8px !important;
   }
 
   #single-companion-panel {

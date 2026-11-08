@@ -107,8 +107,12 @@
             <span class="text-[10px] text-slate-400">Fokus</span>
           </button>
           <button data-layout="1x2" class="layout-opt w-full text-left px-3 py-2 hover:bg-slate-800 flex items-center justify-between text-slate-200">
-            <span>2 Layar (Split)</span>
+            <span>2 Layar (Samping)</span>
             <span class="text-[10px] text-slate-400">1 x 2</span>
+          </button>
+          <button data-layout="2x1" class="layout-opt w-full text-left px-3 py-2 hover:bg-slate-800 flex items-center justify-between text-slate-200">
+            <span>2 Layar (Atas-Bawah)</span>
+            <span class="text-[10px] text-slate-400">Stack</span>
           </button>
           <button data-layout="3-focus" class="layout-opt w-full text-left px-3 py-2 hover:bg-slate-800 flex items-center justify-between text-slate-200">
             <span>3 Layar (1 Utama)</span>
@@ -433,15 +437,18 @@
         <!-- Layout Switcher on Mobile -->
         <div class="p-3 rounded-2xl bg-slate-950 border border-slate-800">
           <label class="block font-semibold text-slate-300 mb-2">Pilihan Tata Letak Layar:</label>
-          <div class="grid grid-cols-3 gap-2">
+          <div class="grid grid-cols-2 gap-2">
             <button data-layout="auto" class="mobile-layout-btn px-2 py-2.5 rounded-xl bg-slate-800 text-slate-200 text-center font-medium hover:bg-rose-600 transition">
               Auto Grid
             </button>
             <button data-layout="1x1" class="mobile-layout-btn px-2 py-2.5 rounded-xl bg-slate-800 text-slate-200 text-center font-medium hover:bg-rose-600 transition">
-              1 Layar
+              1 Layar Full
             </button>
             <button data-layout="1x2" class="mobile-layout-btn px-2 py-2.5 rounded-xl bg-slate-800 text-slate-200 text-center font-medium hover:bg-rose-600 transition">
-              2 Layar
+              2 Layar Samping
+            </button>
+            <button data-layout="2x1" class="mobile-layout-btn px-2 py-2.5 rounded-xl bg-slate-800 text-slate-200 text-center font-medium hover:bg-rose-600 transition">
+              2 Layar Atas-Bawah
             </button>
           </div>
         </div>
