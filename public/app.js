@@ -683,9 +683,11 @@ function renderStreamCard(stream) {
           <i data-lucide="scaling" class="w-3.5 h-3.5"></i>
         </button>
 
-        <!-- Reload Stream -->
-        <button id="btn-reload-${stream.id}" class="p-1.5 rounded-md bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white transition" title="Muat Ulang Stream">
-          <i data-lucide="rotate-cw" class="w-3.5 h-3.5"></i>
+        <!-- Real-Time Sync (Live Edge IDN) -->
+        <button id="btn-reload-${stream.id}" class="btn-sync-live flex items-center gap-1 px-2 py-1 rounded-md bg-rose-950/70 hover:bg-rose-900/80 border border-rose-800/50 hover:border-rose-600 text-[10px] font-semibold text-rose-200 transition shadow-sm" title="Sinkronkan Real-Time persis seperti IDN">
+          <span class="btn-sync-dot w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse"></span>
+          <span class="btn-sync-label font-bold text-rose-300">Live</span>
+          <i data-lucide="rotate-cw" class="w-2.5 h-2.5 text-rose-400 opacity-70"></i>
         </button>
 
         <!-- Live Chat Toggle (If available) -->
@@ -753,11 +755,17 @@ function setupPlayer(stream, video, loader) {
   if (Hls.isSupported()) {
     const hls = new Hls({
       enableWorker: true,
-      lowLatencyMode: false,        // Disable aggressive catchup mode
-      backBufferLength: 30,
-      maxLiveSyncPlaybackRate: 1.0, // Strictly lock to 1.0x normal speed (never 1.5x / 2.0x)
-      liveSyncDuration: 3,
-      liveMaxLatencyDuration: 10
+      lowLatencyMode: true,           // Ultra-low latency mode (LL-HLS)
+      backBufferLength: 10,           // Buffer hemat memori
+      maxBufferLength: 4,             // Buffer depan kecil (4s) agar tidak tertinggal jauh
+      maxMaxBufferLength: 8,
+      liveSyncDuration: 1.2,          // Target delay super dekat: ~1.2 detik (persis seperti IDN Live app)
+      liveMaxLatencyDuration: 3.5,    // Toleransi batas drift 3.5s
+      maxLiveSyncPlaybackRate: 1.0,   // Kunci di 1.0x (tidak fast-forward 2x)
+      liveSyncOnStallIncrease: 0.5,
+      highBufferWatchdogPeriod: 1,
+      nudgeOffset: 0.1,
+      nudgeMaxRetry: 5
     });
 
     hls.loadSource(stream.stream_url);
@@ -794,6 +802,17 @@ function setupPlayer(stream, video, loader) {
     });
 
     stream.hls = hls;
+
+    // Monitor live latency and update button badge periodically
+    if (stream.syncInterval) clearInterval(stream.syncInterval);
+    stream.syncInterval = setInterval(() => {
+      if (!stream.video || !stream.card) {
+        clearInterval(stream.syncInterval);
+        return;
+      }
+      updateLiveSyncIndicator(stream, stream.card);
+    }, 2500);
+
   } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
     // Native HLS (Safari/iOS)
     video.src = stream.stream_url;
@@ -806,6 +825,118 @@ function setupPlayer(stream, video, loader) {
         video.play();
       });
     });
+  }
+}
+
+/**
+ * Update Live Indicator State (Real-Time vs Drift Warning)
+ */
+function updateLiveSyncIndicator(stream, card) {
+  const syncBtn = card.querySelector(`#btn-reload-${stream.id}`);
+  if (!syncBtn) return;
+  const syncDot = syncBtn.querySelector('.btn-sync-dot');
+  const syncLabel = syncBtn.querySelector('.btn-sync-label');
+  if (!syncDot || !syncLabel) return;
+
+  const video = stream.video;
+  if (!video || video.paused || video.readyState < 2) return;
+
+  let drift = 0;
+  if (stream.hls && stream.hls.liveSyncPosition) {
+    drift = Math.max(0, stream.hls.liveSyncPosition - video.currentTime);
+  }
+
+  // If drift is tight (<= 3.2s), it is in sync with IDN Real-Time
+  if (drift <= 3.2) {
+    syncDot.className = 'btn-sync-dot w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse';
+    syncLabel.textContent = 'Live';
+    syncLabel.className = 'btn-sync-label font-bold text-rose-300';
+    syncBtn.className = 'btn-sync-live flex items-center gap-1 px-2 py-1 rounded-md bg-rose-950/70 hover:bg-rose-900/80 border border-rose-800/50 hover:border-rose-600 text-[10px] font-semibold text-rose-200 transition shadow-sm';
+    syncBtn.title = `Real-Time Aktif (Selisih: ${drift.toFixed(1)}s dari live IDN). Klik untuk sync ulang.`;
+  } else {
+    // Drifted behind: prompt user to sync
+    syncDot.className = 'btn-sync-dot w-1.5 h-1.5 rounded-full bg-amber-400';
+    syncLabel.textContent = 'Sync ↻';
+    syncLabel.className = 'btn-sync-label font-bold text-amber-300';
+    syncBtn.className = 'btn-sync-live flex items-center gap-1 px-2 py-1 rounded-md bg-amber-950/70 hover:bg-amber-900/80 border border-amber-800/60 hover:border-amber-600 text-[10px] font-semibold text-amber-200 transition shadow-sm animate-pulse';
+    syncBtn.title = `Tertinggal ${drift.toFixed(1)}s dari siaran IDN. Klik untuk langsung lompat ke Real-Time!`;
+  }
+}
+
+/**
+ * Instant Real-Time Seek to Live Edge (0ms black screen, like IDN Live app)
+ */
+function syncStreamToRealtime(stream, card, video) {
+  const syncBtn = card.querySelector(`#btn-reload-${stream.id}`);
+  const syncLabel = syncBtn?.querySelector('.btn-sync-label');
+  const syncDot = syncBtn?.querySelector('.btn-sync-dot');
+
+  // Visual feedback: green ping
+  if (syncDot) {
+    syncDot.className = 'btn-sync-dot w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping';
+  }
+  if (syncLabel) {
+    syncLabel.textContent = 'Syncing...';
+    syncLabel.className = 'btn-sync-label font-bold text-emerald-300';
+  }
+
+  const finishSync = () => {
+    setTimeout(() => {
+      if (syncDot) {
+        syncDot.className = 'btn-sync-dot w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse';
+      }
+      if (syncLabel) {
+        syncLabel.textContent = 'Live';
+        syncLabel.className = 'btn-sync-label font-bold text-rose-300';
+      }
+      if (syncBtn) {
+        syncBtn.className = 'btn-sync-live flex items-center gap-1 px-2 py-1 rounded-md bg-rose-950/70 hover:bg-rose-900/80 border border-rose-800/50 hover:border-rose-600 text-[10px] font-semibold text-rose-200 transition shadow-sm';
+      }
+    }, 1000);
+  };
+
+  // If video is stalled or error, do clean reload
+  if (!video || video.error || video.readyState === 0) {
+    if (stream.hls) {
+      const loader = card.querySelector(`#loader-${stream.id}`);
+      loader?.classList.remove('hidden');
+      stream.hls.destroy();
+      setupPlayer(stream, video, loader);
+    }
+    finishSync();
+    return;
+  }
+
+  // Instant Seek to live edge
+  if (stream.hls) {
+    try {
+      const livePos = stream.hls.liveSyncPosition;
+      if (livePos !== null && !isNaN(livePos) && livePos > 0) {
+        video.currentTime = livePos;
+      } else if (video.buffered && video.buffered.length > 0) {
+        const edge = video.buffered.end(video.buffered.length - 1);
+        video.currentTime = Math.max(0, edge - 0.15);
+      }
+      stream.hls.startLoad(livePos || -1);
+      video.playbackRate = 1.0;
+      video.play().catch(() => {});
+      finishSync();
+    } catch (e) {
+      console.warn('Real-time sync seek error, reloading:', e);
+      const loader = card.querySelector(`#loader-${stream.id}`);
+      loader?.classList.remove('hidden');
+      stream.hls.destroy();
+      setupPlayer(stream, video, loader);
+      finishSync();
+    }
+  } else {
+    // Native HLS (Safari/iOS)
+    if (video.seekable && video.seekable.length > 0) {
+      video.currentTime = video.seekable.end(video.seekable.length - 1);
+    }
+    video.playbackRate = 1.0;
+    video.play().catch(() => {});
+    finishSync();
   }
 }
 
@@ -848,14 +979,9 @@ function setupCardEvents(stream, card, video) {
     }
   });
 
-  // Reload
+  // Real-Time Live Sync (Persis seperti di IDN)
   card.querySelector(`#btn-reload-${stream.id}`)?.addEventListener('click', () => {
-    if (stream.hls) {
-      const loader = card.querySelector(`#loader-${stream.id}`);
-      loader?.classList.remove('hidden');
-      stream.hls.destroy();
-      setupPlayer(stream, video, loader);
-    }
+    syncStreamToRealtime(stream, card, video);
   });
 
   // Close
@@ -893,6 +1019,7 @@ function removeStream(streamId) {
   const [removed] = State.activeStreams.splice(index, 1);
 
   // Clean up HLS and DOM
+  if (removed.syncInterval) clearInterval(removed.syncInterval);
   if (removed.hls) removed.hls.destroy();
   if (removed.video) {
     removed.video.pause();
