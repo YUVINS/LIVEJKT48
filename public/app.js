@@ -678,7 +678,7 @@ function renderStreamCard(stream) {
           <i data-lucide="${stream.isMuted ? 'volume-x' : 'volume-2'}" class="w-3.5 h-3.5"></i>
         </button>
         <!-- Volume Slider -->
-        <input type="range" id="vol-${stream.id}" min="0" max="1" step="0.05" value="${stream.isMuted ? 0 : stream.volume}" class="stream-vol-slider w-14 sm:w-20 h-1 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-rose-500">
+        <input type="range" id="vol-${stream.id}" min="0" max="1" step="0.05" value="${stream.isMuted ? 0 : stream.volume}" class="stream-vol-slider" title="Atur Volume">
       </div>
 
       <!-- Right: Utility Controls (Reload, Fit, Chat, Web, Fullscreen) -->

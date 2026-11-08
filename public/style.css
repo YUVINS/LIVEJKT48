@@ -245,6 +245,40 @@
   opacity: 1;
 }
 
+/* Custom Slim Volume Slider */
+.stream-vol-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 64px;
+  height: 4px;
+  background: rgba(148, 163, 184, 0.4);
+  border-radius: 9999px;
+  outline: none;
+  cursor: pointer;
+}
+
+.stream-vol-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #f43f5e;
+  cursor: pointer;
+  border: 1px solid #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.stream-vol-slider::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #f43f5e;
+  cursor: pointer;
+  border: 1px solid #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
 /* Loading buffer spinner */
 .video-loader {
   position: absolute;
@@ -364,28 +398,15 @@
     margin: 0 auto !important;
   }
 
-  /* 2 Streams on Mobile: MENYAMPING (2 Columns Side-by-Side with Proper 9:15 Ratio) */
+  /* 2 Streams on Mobile: 2 Columns Side-by-Side */
   .grid-layout-auto[data-count="2"],
   .layout-1x2 {
-    display: flex !important;
-    flex-direction: row !important;
-    align-items: center !important;
-    justify-content: center !important;
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    grid-template-rows: minmax(0, 1fr) !important;
     gap: 0.35rem !important;
-    height: 100% !important;
     width: 100% !important;
-  }
-
-  .grid-layout-auto[data-count="2"] .stream-card,
-  .layout-1x2 .stream-card {
-    flex: 1 1 0 !important;
-    width: calc(50% - 0.2rem) !important;
-    max-width: 50% !important;
-    height: auto !important;
-    max-height: clamp(300px, 62dvh, 480px) !important;
-    aspect-ratio: 9 / 15 !important;
-    align-self: center !important;
-    margin: auto 0 !important;
+    height: 100% !important;
   }
 
   /* 2 Streams on Mobile: ATAS - BAWAH (Stack) */
@@ -394,16 +415,8 @@
     grid-template-columns: minmax(0, 1fr) !important;
     grid-template-rows: repeat(2, minmax(0, 1fr)) !important;
     gap: 0.35rem !important;
-    height: 100% !important;
-    width: 100% !important;
-  }
-
-  .layout-2x1 .stream-card {
     width: 100% !important;
     height: 100% !important;
-    max-height: 100% !important;
-    margin: 0 auto !important;
-    aspect-ratio: unset !important;
   }
 
   /* 3 Streams on Mobile: 1 Top Banner + 2 Bottom Side-by-Side */
@@ -413,6 +426,8 @@
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
     grid-template-rows: repeat(2, minmax(0, 1fr)) !important;
     gap: 0.35rem !important;
+    width: 100% !important;
+    height: 100% !important;
   }
   .grid-layout-auto[data-count="3"] > div:first-child,
   .layout-3-focus > div:first-child {
@@ -420,13 +435,15 @@
     grid-row: span 1 !important;
   }
 
-  /* 4 Streams on Mobile: 2x2 Grid (Menyamping) */
+  /* 4 Streams on Mobile: 2x2 Grid (Quad) */
   .grid-layout-auto[data-count="4"],
   .layout-2x2 {
     display: grid !important;
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
     grid-template-rows: repeat(2, minmax(0, 1fr)) !important;
     gap: 0.35rem !important;
+    width: 100% !important;
+    height: 100% !important;
   }
 
   /* 5 or 6 Streams on Mobile: 2 Columns Grid */
@@ -437,21 +454,33 @@
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
     grid-template-rows: repeat(3, minmax(0, 1fr)) !important;
     gap: 0.35rem !important;
+    width: 100% !important;
+    height: 100% !important;
   }
 
+  /* Stream Card: ALWAYS fills 100% of its designated grid cell */
   .stream-card {
     width: 100% !important;
     height: 100% !important;
-    max-width: none !important;
-    min-height: 0 !important;
+    max-width: 100% !important;
     max-height: 100% !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
     margin: 0 !important;
     border-radius: 0.75rem !important;
+    aspect-ratio: unset !important;
   }
 
   .stream-card-overlay {
     opacity: 1 !important;
-    padding: 0.35rem 0.5rem !important;
+    padding: 0.25rem 0.35rem !important;
+    gap: 0.2rem !important;
+  }
+  .stream-card-overlay .btn-solo {
+    padding: 0.2rem 0.35rem !important;
+  }
+  .stream-card-overlay .btn-solo span {
+    display: none !important;
   }
 
   .stream-card-controls {
@@ -461,18 +490,51 @@
     background: linear-gradient(to top, rgba(15, 23, 42, 0.95) 0%, rgba(15, 23, 42, 0.75) 80%, transparent 100%) !important;
   }
 
+  .stream-card-controls button,
+  .stream-card-controls a {
+    padding: 0.2rem 0.25rem !important;
+  }
+
+  /* Custom Slim Volume Slider without giant thumb */
   .stream-vol-slider {
+    -webkit-appearance: none !important;
+    appearance: none !important;
     display: block !important;
     width: 36px !important;
-    height: 4px !important;
-    accent-color: #f43f5e;
+    height: 3px !important;
+    background: rgba(148, 163, 184, 0.5) !important;
+    border-radius: 9999px !important;
+    outline: none !important;
     cursor: pointer;
-    padding: 4px 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
   }
   @media (min-width: 400px) {
     .stream-vol-slider {
-      width: 46px !important;
+      width: 44px !important;
     }
+  }
+
+  .stream-vol-slider::-webkit-slider-thumb {
+    -webkit-appearance: none !important;
+    appearance: none !important;
+    width: 10px !important;
+    height: 10px !important;
+    border-radius: 50% !important;
+    background: #f43f5e !important;
+    cursor: pointer;
+    border: 1px solid #fff !important;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.5) !important;
+  }
+
+  .stream-vol-slider::-moz-range-thumb {
+    width: 10px !important;
+    height: 10px !important;
+    border-radius: 50% !important;
+    background: #f43f5e !important;
+    cursor: pointer;
+    border: 1px solid #fff !important;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.5) !important;
   }
 
   .btn-fit {
@@ -486,8 +548,11 @@
   }
 
   .btn-sync-live {
-    padding: 0.15rem 0.35rem !important;
+    padding: 0.15rem 0.3rem !important;
     font-size: 8px !important;
+  }
+  .btn-sync-live .btn-sync-label {
+    display: none !important;
   }
 
   #single-companion-panel {
