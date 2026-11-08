@@ -249,16 +249,28 @@ app.get('/api/proxy/idn', async (req, res) => {
   }
 
   try {
+    const clientIp = (req.headers['x-forwarded-for'] || req.socket?.remoteAddress || '').split(',')[0].trim();
+    const fetchHeaders = {
+      'Origin': 'https://www.idn.app',
+      'Referer': 'https://www.idn.app/',
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+    };
+    if (clientIp) {
+      fetchHeaders['X-Forwarded-For'] = clientIp;
+    }
+
     const response = await fetch(targetUrl, {
-      headers: {
-        'Origin': 'https://www.idn.app',
-        'Referer': 'https://www.idn.app/',
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
-      }
+      headers: fetchHeaders
     });
 
     if (!response.ok) {
-      return res.status(response.status).send(`Failed to fetch target: ${response.statusText}`);
+      const errText = await response.text();
+      console.error(`Target fetch failed (${response.status}):`, errText);
+      return res.status(response.status).json({
+        error: `Failed to fetch target: ${response.status}`,
+        headers: Object.fromEntries(response.headers),
+        body: errText.slice(0, 500)
+      });
     }
 
     const contentType = response.headers.get('content-type') || '';
