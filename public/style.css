@@ -16,251 +16,252 @@
   background: rgba(148, 163, 184, 0.8);
 }
 
-/* Base Stream Grid Layout */
-#stream-grid {
-  display: grid;
-  width: 100%;
-  height: 100%;
-  max-height: 100%;
-  min-height: 0;
-  min-width: 0;
-  transition: all 0.3s ease;
-}
-
-#stream-grid.hidden,
-#empty-state.hidden,
-#single-companion-panel.hidden {
-  display: none !important;
-}
-
-#empty-state {
-  height: 100%;
-  max-height: 100%;
+/* Ensure smooth natural scrolling on all devices */
+html, body {
+  min-height: 100vh;
+  min-height: 100dvh;
+  height: auto;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
 }
 
-/* Auto Grid dynamic classes */
-.grid-layout-auto[data-count="1"] {
-  display: flex !important;
-  justify-content: center !important;
-  align-items: center !important;
-  width: 100% !important;
-  height: 100% !important;
+#main-container {
+  min-height: calc(100vh - 65px);
+  min-height: calc(100dvh - 65px);
+  height: auto;
+  overflow-y: visible;
+  -webkit-overflow-scrolling: touch;
 }
 
-.grid-layout-auto[data-count="1"] .stream-card {
-  max-width: 480px !important;
-  width: 100% !important;
-  height: 100% !important;
-  margin: 0 auto !important;
+/* Base Stream Grid Layout */
+#stream-grid {
+  display: grid;
+  width: 100%;
+  max-width: 64rem;
+  margin: 0 auto;
+  gap: 0.75rem;
+  transition: all 0.25s ease;
 }
 
-.grid-layout-auto[data-count="2"] {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  grid-template-rows: minmax(0, 1fr);
-}
-@media (max-width: 640px) {
-  .grid-layout-auto[data-count="2"] {
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-    grid-template-rows: minmax(0, 1fr) !important;
-  }
+#stream-grid.hidden,
+#empty-state.hidden,
+#single-companion-panel.hidden,
+#multiview-hero-card.hidden,
+#multiview-live-tray.hidden {
+  display: none !important;
 }
 
-.grid-layout-auto[data-count="3"] {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  grid-template-rows: minmax(0, 1fr);
-}
-@media (max-width: 768px) {
-  .grid-layout-auto[data-count="3"] {
-    grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: repeat(3, minmax(0, 1fr));
-  }
+#empty-state {
+  width: 100%;
+  max-width: 48rem;
+  margin: 0 auto;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
-.grid-layout-auto[data-count="4"] {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  grid-template-rows: repeat(2, minmax(0, 1fr));
-}
-
-.grid-layout-auto[data-count="5"],
-.grid-layout-auto[data-count="6"] {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  grid-template-rows: repeat(2, minmax(0, 1fr));
-}
-@media (max-width: 1024px) {
-  .grid-layout-auto[data-count="5"],
-  .grid-layout-auto[data-count="6"] {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    grid-template-rows: repeat(3, minmax(0, 1fr));
-  }
-}
-
-.grid-layout-auto[data-count="7"],
-.grid-layout-auto[data-count="8"],
-.grid-layout-auto[data-count="9"] {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  grid-template-rows: repeat(3, minmax(0, 1fr));
-}
-
-/* Forced Layout Presets */
+/* Auto Grid Layout Rules */
+.grid-layout-auto[data-count="1"],
 .layout-1x1 {
   display: flex !important;
   justify-content: center !important;
-  align-items: center !important;
+  align-items: flex-start !important;
   width: 100% !important;
-  height: 100% !important;
 }
 
+.grid-layout-auto[data-count="1"] .stream-card,
 .layout-1x1 .stream-card {
-  max-width: 480px !important;
+  max-width: 400px !important;
   width: 100% !important;
-  height: 100% !important;
   margin: 0 auto !important;
 }
 
+.grid-layout-auto[data-count="2"],
 .layout-1x2 {
+  display: grid !important;
   grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-  grid-template-rows: minmax(0, 1fr) !important;
-}
-@media (max-width: 640px) {
-  .layout-1x2 {
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-    grid-template-rows: minmax(0, 1fr) !important;
-  }
+  gap: 0.65rem !important;
 }
 
 .layout-2x1 {
-  grid-template-columns: minmax(0, 1fr) !important;
-  grid-template-rows: repeat(2, minmax(0, 1fr)) !important;
-}
-
-.layout-3-focus {
   display: grid !important;
-  grid-template-columns: 2fr minmax(0, 1fr) !important;
-  grid-template-rows: repeat(2, minmax(0, 1fr)) !important;
-}
-.layout-3-focus > div:first-child {
-  grid-row: span 2;
+  grid-template-columns: minmax(0, 1fr) !important;
+  gap: 0.65rem !important;
 }
 
-.layout-2x2 {
+.grid-layout-auto[data-count="3"] {
+  display: grid !important;
   grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-  grid-template-rows: repeat(2, minmax(0, 1fr)) !important;
+  gap: 0.65rem !important;
+}
+@media (min-width: 768px) {
+  .grid-layout-auto[data-count="3"],
+  .layout-3x1 {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
 }
 
+.grid-layout-auto[data-count="4"],
+.layout-2x2 {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 0.65rem !important;
+}
+@media (min-width: 1024px) {
+  .grid-layout-auto[data-count="4"] {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  }
+}
+
+.grid-layout-auto[data-count="5"],
+.grid-layout-auto[data-count="6"],
+.grid-layout-auto[data-count="7"],
+.grid-layout-auto[data-count="8"],
+.grid-layout-auto[data-count="9"],
 .layout-3x2 {
-  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-  grid-template-rows: repeat(2, minmax(0, 1fr)) !important;
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 0.65rem !important;
+}
+@media (min-width: 768px) {
+  .grid-layout-auto[data-count="5"],
+  .grid-layout-auto[data-count="6"] {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+}
+@media (min-width: 1024px) {
+  .grid-layout-auto[data-count="5"],
+  .grid-layout-auto[data-count="6"],
+  .grid-layout-auto[data-count="7"],
+  .grid-layout-auto[data-count="8"],
+  .grid-layout-auto[data-count="9"] {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
 }
 
-/* Stream Card Styling */
+/* ============================================================
+   Stream Card Architecture (Reference Layout)
+   ============================================================ */
+
 .stream-card {
-  position: relative;
-  background-color: #000;
-  border-radius: 0.85rem;
-  overflow: hidden;
-  border: 1px solid rgba(51, 65, 85, 0.7);
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  min-height: 0;
-  min-width: 0;
-  height: 100%;
-  max-height: 100%;
-  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  position: relative !important;
+  display: flex !important;
+  flex-direction: column !important;
+  width: 100% !important;
+  height: auto !important;
+  min-height: 0 !important;
+  background-color: #0d1522 !important;
+  border: 1px solid rgba(51, 65, 85, 0.8) !important;
+  border-radius: 1.25rem !important;
+  overflow: hidden !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5) !important;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
 }
 
 .stream-card:hover {
-  border-color: rgba(225, 29, 72, 0.5);
+  border-color: rgba(244, 63, 94, 0.5) !important;
 }
 
-/* Audio Solo Active Glow */
+/* Audio Solo Active State */
 .stream-card.audio-active {
-  border-color: #10b981;
-  box-shadow: 0 0 20px rgba(16, 185, 129, 0.25);
+  border-color: #10b981 !important;
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.35) !important;
 }
 
-.stream-card.audio-active .audio-badge-solo {
-  background-color: #10b981;
-  color: white;
+/* Top Card Header Strip */
+.stream-card-header {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 0.45rem 0.65rem !important;
+  background-color: #0f172a !important;
+  border-bottom: 1px solid rgba(51, 65, 85, 0.7) !important;
+  gap: 0.25rem !important;
+  flex-shrink: 0 !important;
 }
 
-/* Stream Video Player Element */
+/* Action button style inside card header */
+.card-header-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.45rem;
+  border-radius: 0.5rem;
+  background-color: rgba(30, 41, 59, 0.9);
+  color: #cbd5e1;
+  font-size: 10px;
+  font-weight: 600;
+  border: 1px solid rgba(51, 65, 85, 0.6);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+.card-header-btn:hover {
+  background-color: #334155;
+  color: #fff;
+  border-color: rgba(148, 163, 184, 0.5);
+}
+.card-header-btn.btn-close:hover {
+  background-color: #e11d48;
+  border-color: #f43f5e;
+  color: #fff;
+}
+
+/* 9:16 Video Container (Zero Black Bars, Zero Cut Faces) */
+.stream-video-container {
+  position: relative !important;
+  width: 100% !important;
+  aspect-ratio: 9 / 16 !important;
+  background-color: #000 !important;
+  overflow: hidden !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
 .stream-video {
-  width: 100%;
-  height: 100%;
-  max-width: 100%;
-  max-height: 100%;
-  object-fit: contain;
-  background-color: #000;
-  display: block;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  object-fit: contain !important;
+  background-color: #000 !important;
+  display: block !important;
+  transition: transform 0.25s ease !important;
 }
 
 .stream-video.fit-cover {
   object-fit: cover !important;
 }
 
-.stream-video.fit-contain {
-  object-fit: contain !important;
+/* Bottom Card Footer Strip (Audio & Controls) */
+.stream-card-footer {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 0.35rem 0.6rem !important;
+  background-color: #0f172a !important;
+  border-top: 1px solid rgba(51, 65, 85, 0.7) !important;
+  gap: 0.35rem !important;
+  flex-shrink: 0 !important;
 }
 
-/* Stream Card Header Overlay */
-.stream-card-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  background: linear-gradient(to bottom, rgba(15, 23, 42, 0.95) 0%, rgba(15, 23, 42, 0.5) 70%, transparent 100%);
-  padding: 0.6rem 0.75rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.5rem;
-  z-index: 10;
-  opacity: 0.95;
-  transition: opacity 0.2s ease;
-}
-
-.stream-card:hover .stream-card-overlay {
-  opacity: 1;
-}
-
-/* Stream Card Bottom Control Overlay */
-.stream-card-controls {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: linear-gradient(to top, rgba(15, 23, 42, 0.95) 0%, rgba(15, 23, 42, 0.5) 70%, transparent 100%);
-  padding: 0.5rem 0.75rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.5rem;
-  z-index: 10;
-  opacity: 0;
-  transition: opacity 0.2s ease;
-}
-
-.stream-card:hover .stream-card-controls {
-  opacity: 1;
-}
-
-/* Custom Slim Volume Slider */
+/* Slim Volume Slider */
 .stream-vol-slider {
   -webkit-appearance: none;
   appearance: none;
-  width: 64px;
+  width: 48px;
   height: 4px;
   background: rgba(148, 163, 184, 0.4);
   border-radius: 9999px;
   outline: none;
   cursor: pointer;
 }
-
+@media (min-width: 400px) {
+  .stream-vol-slider {
+    width: 60px;
+  }
+}
 .stream-vol-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
@@ -272,7 +273,6 @@
   border: 1px solid #fff;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
 }
-
 .stream-vol-slider::-moz-range-thumb {
   width: 12px;
   height: 12px;
@@ -296,7 +296,6 @@
   z-index: 5;
   transition: opacity 0.3s ease;
 }
-
 .video-loader.hidden {
   opacity: 0;
   pointer-events: none;
@@ -307,7 +306,6 @@
   background: linear-gradient(135deg, #f43f5e, #e11d48);
   color: white;
 }
-
 .badge-sr {
   background: linear-gradient(135deg, #0284c7, #0ea5e9);
   color: white;
@@ -315,280 +313,46 @@
 
 /* Fullscreen support */
 :fullscreen .stream-card {
-  border-radius: 0;
+  border-radius: 0 !important;
+}
+
+/* ============================================================
+   Live Tray Member Avatars (MULTI-VIEW / Pilih live member)
+   ============================================================ */
+
+.tray-member-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+.tray-member-item:hover {
+  transform: translateY(-2px);
+}
+.tray-member-avatar-box {
+  position: relative;
+  width: 3.5rem; /* 56px */
+  height: 3.5rem;
+  border-radius: 0.85rem;
+  overflow: hidden;
+  background-color: #1e293b;
+  border: 2px solid transparent;
+  transition: all 0.2s ease;
+}
+.tray-member-item.active .tray-member-avatar-box {
+  border-color: #2dd4bf; /* Teal active glow as in reference */
+  box-shadow: 0 0 12px rgba(45, 212, 191, 0.5);
 }
 
 /* Companion Panel */
 #single-companion-panel {
   max-height: 100%;
 }
-
 @media (max-width: 768px) {
   #single-companion-panel {
     display: none !important;
-  }
-}
-
-/* ============================================================
-   Responsive Mobile & Tablet Optimization
-   ============================================================ */
-
-/* Touch Device Interactions (Mobile & Tablet) */
-@media (hover: none) and (pointer: coarse) {
-  .stream-card-overlay {
-    opacity: 1 !important;
-  }
-  .stream-card-controls {
-    opacity: 0.95 !important;
-  }
-}
-
-/* Smartphone Portrait & Small Screens (<= 640px) */
-@media (max-width: 640px) {
-  body {
-    height: 100dvh !important;
-    overflow: hidden !important;
-  }
-
-  #main-container {
-    height: calc(100dvh - 86px) !important;
-    min-height: 0 !important;
-    overflow: hidden !important;
-    padding: 0.35rem !important;
-    gap: 0.35rem !important;
-  }
-
-  #stream-grid {
-    display: grid !important;
-    width: 100% !important;
-    height: 100% !important;
-    min-height: 0 !important;
-    gap: 0.35rem !important;
-  }
-
-  #stream-grid.hidden {
-    display: none !important;
-  }
-
-  #empty-state {
-    width: 100% !important;
-    max-width: 100% !important;
-    height: 100% !important;
-    max-height: 100% !important;
-    margin: 0 auto !important;
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
-    justify-content: flex-start !important;
-    padding: 1rem 0.5rem 3.5rem 0.5rem !important;
-    overflow-y: auto !important;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  /* Single Stream on Mobile: Centered, fits height */
-  .grid-layout-auto[data-count="1"],
-  .layout-1x1 {
-    display: flex !important;
-    justify-content: center !important;
-    align-items: center !important;
-    width: 100% !important;
-    height: 100% !important;
-  }
-  .grid-layout-auto[data-count="1"] .stream-card,
-  .layout-1x1 .stream-card {
-    max-width: 440px !important;
-    width: 100% !important;
-    height: 100% !important;
-    margin: 0 auto !important;
-  }
-
-  /* 2 Streams on Mobile: 2 Columns Side-by-Side */
-  .grid-layout-auto[data-count="2"],
-  .layout-1x2 {
-    display: grid !important;
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-    grid-template-rows: minmax(0, 1fr) !important;
-    gap: 0.35rem !important;
-    width: 100% !important;
-    height: 100% !important;
-  }
-
-  /* 2 Streams on Mobile: ATAS - BAWAH (Stack) */
-  .layout-2x1 {
-    display: grid !important;
-    grid-template-columns: minmax(0, 1fr) !important;
-    grid-template-rows: repeat(2, minmax(0, 1fr)) !important;
-    gap: 0.35rem !important;
-    width: 100% !important;
-    height: 100% !important;
-  }
-
-  /* 3 Streams on Mobile: 1 Top Banner + 2 Bottom Side-by-Side */
-  .grid-layout-auto[data-count="3"],
-  .layout-3-focus {
-    display: grid !important;
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-    grid-template-rows: repeat(2, minmax(0, 1fr)) !important;
-    gap: 0.35rem !important;
-    width: 100% !important;
-    height: 100% !important;
-  }
-  .grid-layout-auto[data-count="3"] > div:first-child,
-  .layout-3-focus > div:first-child {
-    grid-column: span 2 !important;
-    grid-row: span 1 !important;
-  }
-
-  /* 4 Streams on Mobile: 2x2 Grid (Quad) */
-  .grid-layout-auto[data-count="4"],
-  .layout-2x2 {
-    display: grid !important;
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-    grid-template-rows: repeat(2, minmax(0, 1fr)) !important;
-    gap: 0.35rem !important;
-    width: 100% !important;
-    height: 100% !important;
-  }
-
-  /* 5 or 6 Streams on Mobile: 2 Columns Grid */
-  .grid-layout-auto[data-count="5"],
-  .grid-layout-auto[data-count="6"],
-  .layout-3x2 {
-    display: grid !important;
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-    grid-template-rows: repeat(3, minmax(0, 1fr)) !important;
-    gap: 0.35rem !important;
-    width: 100% !important;
-    height: 100% !important;
-  }
-
-  /* Stream Card: ALWAYS fills 100% of its designated grid cell */
-  .stream-card {
-    width: 100% !important;
-    height: 100% !important;
-    max-width: 100% !important;
-    max-height: 100% !important;
-    min-width: 0 !important;
-    min-height: 0 !important;
-    margin: 0 !important;
-    border-radius: 0.75rem !important;
-    aspect-ratio: unset !important;
-  }
-
-  .stream-card-overlay {
-    opacity: 1 !important;
-    padding: 0.25rem 0.35rem !important;
-    gap: 0.2rem !important;
-  }
-  .stream-card-overlay .btn-solo {
-    padding: 0.2rem 0.35rem !important;
-  }
-  .stream-card-overlay .btn-solo span {
-    display: none !important;
-  }
-
-  .stream-card-controls {
-    opacity: 1 !important;
-    padding: 0.25rem 0.35rem !important;
-    gap: 0.2rem !important;
-    background: linear-gradient(to top, rgba(15, 23, 42, 0.95) 0%, rgba(15, 23, 42, 0.75) 80%, transparent 100%) !important;
-  }
-
-  .stream-card-controls button,
-  .stream-card-controls a {
-    padding: 0.2rem 0.25rem !important;
-  }
-
-  /* Custom Slim Volume Slider without giant thumb */
-  .stream-vol-slider {
-    -webkit-appearance: none !important;
-    appearance: none !important;
-    display: block !important;
-    width: 36px !important;
-    height: 3px !important;
-    background: rgba(148, 163, 184, 0.5) !important;
-    border-radius: 9999px !important;
-    outline: none !important;
-    cursor: pointer;
-    margin: 0 !important;
-    padding: 0 !important;
-  }
-  @media (min-width: 400px) {
-    .stream-vol-slider {
-      width: 44px !important;
-    }
-  }
-
-  .stream-vol-slider::-webkit-slider-thumb {
-    -webkit-appearance: none !important;
-    appearance: none !important;
-    width: 10px !important;
-    height: 10px !important;
-    border-radius: 50% !important;
-    background: #f43f5e !important;
-    cursor: pointer;
-    border: 1px solid #fff !important;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.5) !important;
-  }
-
-  .stream-vol-slider::-moz-range-thumb {
-    width: 10px !important;
-    height: 10px !important;
-    border-radius: 50% !important;
-    background: #f43f5e !important;
-    cursor: pointer;
-    border: 1px solid #fff !important;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.5) !important;
-  }
-
-  .btn-fit {
-    display: flex !important;
-  }
-
-  /* Stream Video on Mobile: Default to cover (Fill Penuh Pas Layar IDN - Tanpa Gap Layar Hitam) */
-  .stream-video:not(.fit-contain) {
-    object-fit: cover !important;
-  }
-
-  /* On mobile, hide bulky non-critical buttons to keep controls compact */
-  .stream-web-link,
-  .btn-chat-toggle {
-    display: none !important;
-  }
-
-  .btn-sync-live {
-    padding: 0.15rem 0.3rem !important;
-    font-size: 8px !important;
-  }
-  .btn-sync-live .btn-sync-label {
-    display: none !important;
-  }
-
-  #single-companion-panel {
-    display: none !important;
-  }
-}
-
-/* Tablets (641px - 1024px) */
-@media (min-width: 641px) and (max-width: 1024px) {
-  body {
-    height: 100dvh !important;
-    overflow: hidden !important;
-  }
-
-  #main-container {
-    padding: 0.5rem !important;
-  }
-
-  .stream-card {
-    min-height: 0 !important;
-  }
-
-  .stream-card-overlay {
-    opacity: 1 !important;
-  }
-
-  .stream-card-controls {
-    opacity: 0.95 !important;
   }
 }

@@ -93,6 +93,11 @@ function setupEventListeners() {
   document.getElementById('btn-clear-all')?.addEventListener('click', clearAllStreams);
   document.getElementById('btn-sync-all')?.addEventListener('click', syncAllStreams);
 
+  // Multiview Top Hero & Live Tray Buttons (Reference Design)
+  document.getElementById('btn-hero-home')?.addEventListener('click', clearAllStreams);
+  document.getElementById('btn-hero-sync-all')?.addEventListener('click', syncAllStreams);
+  document.getElementById('btn-tray-clear')?.addEventListener('click', clearAllStreams);
+
   // Modal Open/Close
   const modal = document.getElementById('modal-add');
   document.getElementById('btn-open-add')?.addEventListener('click', () => openModal());
@@ -252,6 +257,7 @@ async function fetchLives(isBackground = false) {
 
     // Update Carousel & Lists
     renderLiveAvatarsCarousel(State.availableLives);
+    renderMultiviewLiveTray(State.availableLives);
     renderModalLiveList(State.availableLives);
     renderEmptyStateLives(State.availableLives);
 
@@ -303,6 +309,46 @@ function renderLiveAvatarsCarousel(lives) {
     });
 
     liveAvatarsContainer.appendChild(btn);
+  });
+}
+
+/**
+ * Render Multiview Live Tray (Reference layout: MULTI-VIEW / Pilih live member)
+ */
+function renderMultiviewLiveTray(lives) {
+  const container = document.getElementById('multiview-tray-avatars');
+  if (!container) return;
+  container.innerHTML = '';
+
+  if (!lives || lives.length === 0) {
+    container.innerHTML = '<span class="text-xs text-slate-500 italic py-2">Sedang tidak ada live aktif</span>';
+    return;
+  }
+
+  lives.forEach(live => {
+    const isAdded = State.activeStreams.some(s => s.id === live.id);
+    const item = document.createElement('div');
+    item.className = `tray-member-item ${isAdded ? 'active' : ''}`;
+    item.title = isAdded ? `Klik untuk menutup live ${live.name}` : `Klik untuk tonton ${live.name}`;
+
+    const nick = live.member_nick || (live.name ? live.name.split(' ')[0] : 'Member');
+
+    item.innerHTML = `
+      <div class="tray-member-avatar-box">
+        <img src="${live.avatar || 'https://via.placeholder.com/80'}" class="w-full h-full object-cover" onerror="this.src='https://via.placeholder.com/80'">
+      </div>
+      <span class="text-[11px] font-medium text-slate-300 truncate max-w-[62px] text-center">${nick}</span>
+    `;
+
+    item.addEventListener('click', () => {
+      if (isAdded) {
+        removeStream(live.id);
+      } else {
+        addStream(live);
+      }
+    });
+
+    container.appendChild(item);
   });
 }
 
@@ -612,79 +658,82 @@ function addStream(streamData) {
 }
 
 /**
- * Render Individual Stream Card in Grid
+ * Render Individual Stream Card in Grid (Reference Design Layout)
  */
 function renderStreamCard(stream) {
   const card = document.createElement('div');
   card.id = `card-${stream.id}`;
   card.className = `stream-card group ${stream.id === State.soloStreamId ? 'audio-active' : ''}`;
 
-  const platformBadge = stream.platform === 'idn' 
-    ? '<span class="px-1.5 py-0.5 rounded text-[10px] font-bold uppercase badge-idn">IDN</span>'
-    : '<span class="px-1.5 py-0.5 rounded text-[10px] font-bold uppercase badge-sr">SHOWROOM</span>';
+  const platformName = stream.platform === 'idn' ? 'IDN Live' : 'SHOWROOM';
+  const shortName = stream.member_nick || stream.name;
 
   card.innerHTML = `
-    <!-- Video Element -->
-    <video id="video-${stream.id}" class="stream-video" playsinline webkit-playsinline></video>
-
-    <!-- Buffer / Loading Overlay -->
-    <div id="loader-${stream.id}" class="video-loader">
-      <div class="relative w-10 h-10 mb-2">
-        <div class="w-full h-full rounded-full border-2 border-rose-500/20 border-t-rose-500 animate-spin"></div>
-        <span class="absolute inset-0 flex items-center justify-center text-[10px] font-bold text-rose-400">48</span>
+    <!-- Top Header Strip -->
+    <div class="stream-card-header">
+      <div class="flex items-center gap-1.5 min-w-0 flex-1">
+        <div class="min-w-0 flex-1">
+          <h4 class="font-bold text-xs sm:text-sm text-white truncate max-w-[80px] sm:max-w-[140px] leading-tight">${shortName}</h4>
+          <span class="text-[10px] text-slate-400 block truncate leading-tight">${platformName}</span>
+        </div>
       </div>
-      <span class="text-xs text-slate-300 font-medium">Memuat live stream...</span>
-      <span class="text-[10px] text-slate-500 mt-0.5">${stream.name}</span>
+      <div class="flex items-center gap-1 flex-shrink-0">
+        <button id="btn-rotate-${stream.id}" class="card-header-btn" title="Putar Posisi Layar (Rotate)">
+          <span>Rotate</span>
+        </button>
+        <button id="btn-reload-${stream.id}" class="card-header-btn" title="Refresh Live Edge">
+          <span>Refresh</span>
+        </button>
+        <button id="btn-move-left-${stream.id}" class="card-header-btn px-1.5" title="Geser ke Kiri">
+          <span>←</span>
+        </button>
+        <button id="btn-move-right-${stream.id}" class="card-header-btn px-1.5" title="Geser ke Kanan">
+          <span>→</span>
+        </button>
+        <button id="btn-close-${stream.id}" class="card-header-btn btn-close" title="Tutup Layar">
+          <span>Tutup</span>
+        </button>
+      </div>
     </div>
 
-    <!-- Top Overlay (Info & Solo/Close) -->
-    <div class="stream-card-overlay">
-      <div class="flex items-center gap-1.5 min-w-0 flex-1">
-        <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-full overflow-hidden flex-shrink-0 bg-slate-800 border border-slate-700">
-          <img src="${stream.avatar || 'https://via.placeholder.com/60'}" class="w-full h-full object-cover">
-        </div>
-        <div class="min-w-0 flex-1">
-          <div class="flex items-center gap-1 min-w-0">
-            <span class="font-bold text-xs text-white truncate max-w-[75px] sm:max-w-[200px]">${stream.name}</span>
-            ${platformBadge}
-          </div>
-          ${stream.title ? `<p class="text-[9px] sm:text-[10px] text-slate-400 truncate max-w-[75px] sm:max-w-[220px]">${stream.title}</p>` : ''}
-        </div>
-      </div>
+    <!-- 9:16 Aspect Ratio Video Container (Natural Ratio, Zero Black Bars, Zero Crop) -->
+    <div class="stream-video-container">
+      <video id="video-${stream.id}" class="stream-video" playsinline webkit-playsinline></video>
 
-      <!-- Action Buttons: Solo & Close only for collision-free top overlay -->
+      <!-- Buffer / Loading Overlay -->
+      <div id="loader-${stream.id}" class="video-loader">
+        <div class="relative w-9 h-9 mb-1.5">
+          <div class="w-full h-full rounded-full border-2 border-rose-500/20 border-t-rose-500 animate-spin"></div>
+          <span class="absolute inset-0 flex items-center justify-center text-[10px] font-bold text-rose-400">48</span>
+        </div>
+        <span class="text-[11px] text-slate-300 font-medium">Memuat live stream...</span>
+        <span class="text-[9px] text-slate-500 mt-0.5">${shortName}</span>
+      </div>
+    </div>
+
+    <!-- Bottom Card Footer Strip (Dedicated Audio & Utility Controls) -->
+    <div class="stream-card-footer">
       <div class="flex items-center gap-1 sm:gap-1.5 flex-shrink-0">
         <!-- Solo Audio Button -->
-        <button id="btn-solo-${stream.id}" class="btn-solo flex items-center gap-1 px-1.5 sm:px-2 py-1 rounded-lg text-[10px] sm:text-[11px] font-semibold transition ${
-          stream.id === State.soloStreamId ? 'bg-emerald-600 text-white shadow-sm shadow-emerald-500/50' : 'bg-slate-800/90 hover:bg-slate-700 text-slate-300'
+        <button id="btn-solo-${stream.id}" class="btn-solo flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold transition ${
+          stream.id === State.soloStreamId ? 'bg-emerald-600 text-white shadow-sm' : 'bg-slate-800 text-slate-300 hover:text-white'
         }" title="Solo Audio: Dengarkan stream ini saja">
-          <i data-lucide="headphones" class="w-3 sm:w-3.5 h-3 sm:h-3.5"></i>
+          <i data-lucide="headphones" class="w-3 h-3"></i>
           <span class="hidden sm:inline">Solo</span>
         </button>
 
-        <!-- Close Stream -->
-        <button id="btn-close-${stream.id}" class="p-1 sm:p-1.5 rounded-lg bg-slate-800/90 hover:bg-rose-600 text-slate-300 hover:text-white transition" title="Tutup Layar Ini">
-          <i data-lucide="x" class="w-3 sm:w-3.5 h-3 sm:h-3.5"></i>
-        </button>
-      </div>
-    </div>
-
-    <!-- Bottom Overlay (Volume & Utility Controls) -->
-    <div class="stream-card-controls">
-      <!-- Left: Audio Controls -->
-      <div class="flex items-center gap-1 sm:gap-1.5 flex-shrink-0">
         <!-- Mute Button -->
-        <button id="btn-mute-${stream.id}" class="p-1 sm:p-1.5 rounded-md bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white transition" title="Mute/Unmute">
+        <button id="btn-mute-${stream.id}" class="p-1 rounded bg-slate-800 text-slate-300 hover:text-white transition cursor-pointer" title="Mute/Unmute">
           <i data-lucide="${stream.isMuted ? 'volume-x' : 'volume-2'}" class="w-3.5 h-3.5"></i>
         </button>
-        <!-- Volume Slider -->
+
+        <!-- Dedicated Volume Slider -->
         <input type="range" id="vol-${stream.id}" min="0" max="1" step="0.05" value="${stream.isMuted ? 0 : stream.volume}" class="stream-vol-slider" title="Atur Volume">
       </div>
 
-      <!-- Right: Utility Controls (Reload, Fit, Chat, Web, Fullscreen) -->
-      <div class="flex items-center gap-1 sm:gap-1.5 flex-shrink-0">
-        <!-- Fit Toggle (Pas Layar IDN vs Asli) -->
-        <button id="btn-fit-${stream.id}" class="btn-fit p-1 sm:p-1.5 rounded-md bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white transition" title="Ubah Ukuran (Penuh IDN / Asli)">
+      <div class="flex items-center gap-1 flex-shrink-0">
+        <!-- Fit / Cover Toggle -->
+        <button id="btn-fit-${stream.id}" class="p-1 rounded bg-slate-800 text-slate-300 hover:text-white transition cursor-pointer" title="Fit Proporsi Asli / Penuh">
           <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="15 3 21 3 21 9"></polyline>
             <polyline points="9 21 3 21 3 15"></polyline>
@@ -693,29 +742,15 @@ function renderStreamCard(stream) {
           </svg>
         </button>
 
-        <!-- Real-Time Sync (Live Edge IDN) -->
-        <button id="btn-reload-${stream.id}" class="btn-sync-live flex items-center gap-1 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-md bg-rose-950/70 hover:bg-rose-900/80 border border-rose-800/50 hover:border-rose-600 text-[9px] sm:text-[10px] font-semibold text-rose-200 transition shadow-sm" title="Sinkronkan Real-Time persis seperti IDN">
-          <span class="btn-sync-dot w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse"></span>
-          <span class="btn-sync-label font-bold text-rose-300">Live</span>
-          <i data-lucide="rotate-cw" class="w-2.5 h-2.5 text-rose-400 opacity-70"></i>
-        </button>
-
-        <!-- Live Chat Toggle (If available) -->
-        ${stream.room_id || stream.platform === 'showroom' ? `
-          <button id="btn-chat-${stream.id}" class="btn-chat-toggle p-1 sm:p-1.5 rounded-md bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white transition" title="Buka Live Chat">
-            <i data-lucide="message-square" class="w-3 sm:w-3.5 h-3 sm:h-3.5"></i>
-          </button>
-        ` : ''}
-
         ${stream.page_url ? `
-          <a href="${stream.page_url}" target="_blank" rel="noopener noreferrer" class="stream-web-link p-1 sm:p-1.5 rounded-md bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-rose-400 transition" title="Buka di Website Asli">
-            <i data-lucide="external-link" class="w-3 sm:w-3.5 h-3 sm:h-3.5"></i>
+          <a href="${stream.page_url}" target="_blank" rel="noopener noreferrer" class="p-1 rounded bg-slate-800 text-slate-300 hover:text-rose-400 transition" title="Buka Web Resmi">
+            <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
           </a>
         ` : ''}
 
         <!-- Per Card Fullscreen -->
-        <button id="btn-card-fs-${stream.id}" class="p-1 sm:p-1.5 rounded-md bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white transition" title="Layar Penuh">
-          <i data-lucide="maximize-2" class="w-3 sm:w-3.5 h-3 sm:h-3.5"></i>
+        <button id="btn-card-fs-${stream.id}" class="p-1 rounded bg-slate-800 text-slate-300 hover:text-white transition cursor-pointer" title="Layar Penuh">
+          <i data-lucide="maximize-2" class="w-3.5 h-3.5"></i>
         </button>
       </div>
     </div>
@@ -962,9 +997,48 @@ function syncStreamToRealtime(stream, card, video) {
 }
 
 /**
+ * Move / Swap Stream Position in Grid
+ */
+function moveStream(streamId, dir) {
+  const idx = State.activeStreams.findIndex(s => s.id === streamId);
+  if (idx === -1) return;
+  const targetIdx = idx + dir;
+  if (targetIdx < 0 || targetIdx >= State.activeStreams.length) return;
+
+  const temp = State.activeStreams[idx];
+  State.activeStreams[idx] = State.activeStreams[targetIdx];
+  State.activeStreams[targetIdx] = temp;
+
+  // Re-order DOM elements without reloading/remounting videos
+  if (grid) {
+    State.activeStreams.forEach(s => {
+      const c = document.getElementById(`card-${s.id}`);
+      if (c) grid.appendChild(c);
+    });
+  }
+  saveSession();
+}
+
+/**
  * Setup Individual Card Events
  */
 function setupCardEvents(stream, card, video) {
+  // Rotate Video 90 degrees
+  card.querySelector(`#btn-rotate-${stream.id}`)?.addEventListener('click', () => {
+    stream.rotation = ((stream.rotation || 0) + 90) % 360;
+    video.style.transform = stream.rotation ? `rotate(${stream.rotation}deg)` : '';
+  });
+
+  // Move Stream Left in Grid
+  card.querySelector(`#btn-move-left-${stream.id}`)?.addEventListener('click', () => {
+    moveStream(stream.id, -1);
+  });
+
+  // Move Stream Right in Grid
+  card.querySelector(`#btn-move-right-${stream.id}`)?.addEventListener('click', () => {
+    moveStream(stream.id, 1);
+  });
+
   // Solo Audio
   card.querySelector(`#btn-solo-${stream.id}`)?.addEventListener('click', () => {
     toggleSoloAudio(stream.id);
@@ -998,34 +1072,29 @@ function setupCardEvents(stream, card, video) {
     updateCardAudioUI(stream);
   });
 
-  // Fit / Fill Toggle (Cover / Pas Layar IDN vs Contain / Asli)
+  // Fit / Fill Toggle
   card.querySelector(`#btn-fit-${stream.id}`)?.addEventListener('click', () => {
-    const isMobile = window.innerWidth <= 640;
-    const isContain = video.classList.contains('fit-contain') || (!isMobile && !video.classList.contains('fit-cover'));
+    const isCover = video.classList.contains('fit-cover');
     const fitBtn = card.querySelector(`#btn-fit-${stream.id}`);
 
-    if (isContain) {
-      video.classList.remove('fit-contain');
+    if (isCover) {
+      video.classList.remove('fit-cover');
+      stream.fitMode = 'contain';
+      if (fitBtn) {
+        fitBtn.classList.remove('text-rose-400');
+        fitBtn.classList.add('text-slate-300');
+      }
+    } else {
       video.classList.add('fit-cover');
       stream.fitMode = 'cover';
       if (fitBtn) {
-        fitBtn.title = 'Ubah ke Mode Proporsi Asli (Fit)';
         fitBtn.classList.add('text-rose-400');
         fitBtn.classList.remove('text-slate-300');
-      }
-    } else {
-      video.classList.remove('fit-cover');
-      video.classList.add('fit-contain');
-      stream.fitMode = 'contain';
-      if (fitBtn) {
-        fitBtn.title = 'Ubah ke Mode Pas Layar IDN (Penuh Tanpa Bar Hitam)';
-        fitBtn.classList.remove('text-rose-400');
-        fitBtn.classList.add('text-slate-300');
       }
     }
   });
 
-  // Real-Time Live Sync (Persis seperti di IDN)
+  // Real-Time Live Sync / Refresh
   card.querySelector(`#btn-reload-${stream.id}`)?.addEventListener('click', () => {
     syncStreamToRealtime(stream, card, video);
   });
@@ -1041,16 +1110,6 @@ function setupCardEvents(stream, card, video) {
       card.requestFullscreen().catch(err => alert(err.message));
     } else {
       document.exitFullscreen();
-    }
-  });
-
-  // Chat button
-  card.querySelector(`#btn-chat-${stream.id}`)?.addEventListener('click', () => {
-    if (State.activeStreams.length === 1) {
-      State.companionCollapsed = false;
-      updateCompanionPanel();
-    } else {
-      openChatDrawer(stream);
     }
   });
 }
@@ -1086,11 +1145,9 @@ function removeStream(streamId) {
   updateGridDisplay();
   saveSession();
   renderLiveAvatarsCarousel(State.availableLives);
+  renderMultiviewLiveTray(State.availableLives);
 }
 
-/**
- * Clear All Streams
- */
 /**
  * Synchronize All Active Streams to Live Edge Simultaneously
  */
@@ -1117,12 +1174,25 @@ function clearAllStreams() {
   updateGridDisplay();
   saveSession();
   renderLiveAvatarsCarousel(State.availableLives);
+  renderMultiviewLiveTray(State.availableLives);
 }
 
 /**
  * Solo Audio: Mute All Others, Unmute Selected
  */
 function toggleSoloAudio(streamId) {
+  if (State.soloStreamId === streamId) {
+    // Toggle off solo: unmute all or leave active
+    State.soloStreamId = null;
+    State.activeStreams.forEach(stream => {
+      stream.isMuted = false;
+      if (stream.video) stream.video.muted = false;
+      updateCardAudioUI(stream);
+    });
+    document.querySelectorAll('.stream-card').forEach(card => card.classList.remove('audio-active'));
+    return;
+  }
+
   State.soloStreamId = streamId;
 
   State.activeStreams.forEach(stream => {
@@ -1179,14 +1249,14 @@ function updateCardAudioUI(stream) {
 
   if (soloBtn) {
     if (isSolo) {
-      soloBtn.className = 'btn-solo flex items-center gap-1 px-2 py-1 rounded-md text-[11px] font-semibold transition bg-emerald-600 text-white';
+      soloBtn.className = 'btn-solo flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold transition bg-emerald-600 text-white shadow-sm';
     } else {
-      soloBtn.className = 'btn-solo flex items-center gap-1 px-2 py-1 rounded-md text-[11px] font-semibold transition bg-slate-800/80 hover:bg-slate-700 text-slate-300';
+      soloBtn.className = 'btn-solo flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold transition bg-slate-800 text-slate-300 hover:text-white';
     }
   }
 
   if (muteBtn) {
-    muteBtn.innerHTML = `<i data-lucide="${stream.isMuted ? 'volume-x' : 'volume-2'}" class="w-4 h-4"></i>`;
+    muteBtn.innerHTML = `<i data-lucide="${stream.isMuted ? 'volume-x' : 'volume-2'}" class="w-3.5 h-3.5"></i>`;
     if (window.lucide) lucide.createIcons({ root: muteBtn });
   }
 
@@ -1200,16 +1270,29 @@ function updateCardAudioUI(stream) {
  */
 function updateGridDisplay() {
   const count = State.activeStreams.length;
+  const heroCard = document.getElementById('multiview-hero-card');
+  const liveTray = document.getElementById('multiview-live-tray');
+  const heroCount = document.getElementById('hero-streams-count');
+
+  if (heroCount) {
+    heroCount.textContent = `${count} stream aktif`;
+  }
 
   if (count === 0) {
     grid.classList.add('hidden');
     emptyState.classList.remove('hidden');
+    heroCard?.classList.add('hidden');
+    liveTray?.classList.add('hidden');
     document.getElementById('single-companion-panel')?.classList.add('hidden');
     return;
   }
 
   grid.classList.remove('hidden');
   emptyState.classList.add('hidden');
+  heroCard?.classList.remove('hidden');
+  liveTray?.classList.remove('hidden');
+
+  renderMultiviewLiveTray(State.availableLives);
 
   applyLayout(State.currentLayout, count);
   updateCompanionPanel();
@@ -1389,8 +1472,8 @@ function setLayout(layoutName) {
 }
 
 function applyLayout(layoutName, count) {
-  // Remove all previous layout classes
-  grid.className = 'flex-1 w-full h-full gap-2.5 min-h-[70vh] transition-all';
+  // Set base grid layout classes
+  grid.className = 'w-full max-w-4xl mx-auto grid gap-3 transition-all flex-1 min-h-0';
   grid.setAttribute('data-count', Math.min(count, 9));
 
   if (layoutName === 'auto') {
