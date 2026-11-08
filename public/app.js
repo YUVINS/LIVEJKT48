@@ -742,29 +742,40 @@ function setupPlayer(stream, video, loader) {
     }
   });
 
-  // Hide loader when playing
+  // Debounced loader handling to prevent flickering on micro segment transitions
+  let waitTimeout = null;
   video.addEventListener('playing', () => {
+    if (waitTimeout) {
+      clearTimeout(waitTimeout);
+      waitTimeout = null;
+    }
     loader?.classList.add('hidden');
     video.playbackRate = 1.0;
   });
 
   video.addEventListener('waiting', () => {
-    loader?.classList.remove('hidden');
+    // Only show loading spinner if stall lasts longer than 750ms
+    if (waitTimeout) clearTimeout(waitTimeout);
+    waitTimeout = setTimeout(() => {
+      if (video.paused || video.readyState < 3) {
+        loader?.classList.remove('hidden');
+      }
+    }, 750);
   });
 
   if (Hls.isSupported()) {
     const hls = new Hls({
       enableWorker: true,
-      lowLatencyMode: true,           // Ultra-low latency mode (LL-HLS)
-      backBufferLength: 10,           // Buffer hemat memori
-      maxBufferLength: 4,             // Buffer depan kecil (4s) agar tidak tertinggal jauh
-      maxMaxBufferLength: 8,
-      liveSyncDuration: 1.2,          // Target delay super dekat: ~1.2 detik (persis seperti IDN Live app)
-      liveMaxLatencyDuration: 3.5,    // Toleransi batas drift 3.5s
-      maxLiveSyncPlaybackRate: 1.0,   // Kunci di 1.0x (tidak fast-forward 2x)
-      liveSyncOnStallIncrease: 0.5,
-      highBufferWatchdogPeriod: 1,
-      nudgeOffset: 0.1,
+      lowLatencyMode: false,          // AWS IVS uses 2s standard HLS segments
+      backBufferLength: 15,
+      maxBufferLength: 10,            // 10s buffer ahead for rock-solid playback
+      maxMaxBufferLength: 20,
+      liveSyncDuration: 3.5,          // ~1.7 segments target buffer (smooth & low latency)
+      liveMaxLatencyDuration: 8.0,    // 8s drift ceiling to avoid constant seeking
+      maxLiveSyncPlaybackRate: 1.0,   // Strict 1.0x playback rate (no 2x speedup)
+      liveSyncOnStallIncrease: 1.0,
+      highBufferWatchdogPeriod: 2,
+      nudgeOffset: 0.2,
       nudgeMaxRetry: 5
     });
 
@@ -846,20 +857,20 @@ function updateLiveSyncIndicator(stream, card) {
     drift = Math.max(0, stream.hls.liveSyncPosition - video.currentTime);
   }
 
-  // If drift is tight (<= 3.2s), it is in sync with IDN Real-Time
-  if (drift <= 3.2) {
+  // If drift is within safe live window (<= 6.0s), consider in sync
+  if (drift <= 6.0) {
     syncDot.className = 'btn-sync-dot w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse';
     syncLabel.textContent = 'Live';
     syncLabel.className = 'btn-sync-label font-bold text-rose-300';
     syncBtn.className = 'btn-sync-live flex items-center gap-1 px-2 py-1 rounded-md bg-rose-950/70 hover:bg-rose-900/80 border border-rose-800/50 hover:border-rose-600 text-[10px] font-semibold text-rose-200 transition shadow-sm';
-    syncBtn.title = `Real-Time Aktif (Selisih: ${drift.toFixed(1)}s dari live IDN). Klik untuk sync ulang.`;
+    syncBtn.title = `Real-Time Aktif (Selisih: ${drift.toFixed(1)}s dari live). Klik untuk sync ke detik terbaru.`;
   } else {
     // Drifted behind: prompt user to sync
     syncDot.className = 'btn-sync-dot w-1.5 h-1.5 rounded-full bg-amber-400';
     syncLabel.textContent = 'Sync ↻';
     syncLabel.className = 'btn-sync-label font-bold text-amber-300';
     syncBtn.className = 'btn-sync-live flex items-center gap-1 px-2 py-1 rounded-md bg-amber-950/70 hover:bg-amber-900/80 border border-amber-800/60 hover:border-amber-600 text-[10px] font-semibold text-amber-200 transition shadow-sm animate-pulse';
-    syncBtn.title = `Tertinggal ${drift.toFixed(1)}s dari siaran IDN. Klik untuk langsung lompat ke Real-Time!`;
+    syncBtn.title = `Tertinggal ${drift.toFixed(1)}s dari siaran langsung. Klik untuk melompat ke Real-Time!`;
   }
 }
 
@@ -915,7 +926,7 @@ function syncStreamToRealtime(stream, card, video) {
         video.currentTime = livePos;
       } else if (video.buffered && video.buffered.length > 0) {
         const edge = video.buffered.end(video.buffered.length - 1);
-        video.currentTime = Math.max(0, edge - 0.15);
+        video.currentTime = Math.max(0, edge - 0.5);
       }
       stream.hls.startLoad(livePos || -1);
       video.playbackRate = 1.0;
