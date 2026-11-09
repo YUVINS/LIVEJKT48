@@ -666,7 +666,7 @@ function addStream(streamData) {
 function renderStreamCard(stream) {
   const card = document.createElement('div');
   card.id = `card-${stream.id}`;
-  card.className = `stream-card group ${stream.id === State.soloStreamId ? 'audio-active' : ''}`;
+  card.className = 'stream-card group';
 
   const platformName = stream.platform === 'idn' ? 'IDN Live' : 'SHOWROOM';
   const shortName = stream.member_nick || stream.name;
@@ -676,25 +676,23 @@ function renderStreamCard(stream) {
     <div class="stream-card-header">
       <div class="flex items-center gap-1.5 min-w-0 flex-1">
         <div class="min-w-0 flex-1">
-          <h4 class="font-bold text-xs sm:text-sm text-white truncate max-w-[80px] sm:max-w-[140px] leading-tight">${shortName}</h4>
-          <span class="text-[10px] text-slate-400 block truncate leading-tight">${platformName}</span>
+          <h4 class="font-bold text-xs sm:text-sm text-white truncate max-w-[85px] sm:max-w-[150px] leading-tight">${shortName}</h4>
+          <span class="text-[9px] sm:text-[10px] text-slate-400 block truncate leading-tight">${platformName}</span>
         </div>
       </div>
       <div class="flex items-center gap-1 flex-shrink-0">
-        <button id="btn-rotate-${stream.id}" class="card-header-btn" title="Putar Posisi Layar (Rotate)">
-          <span>Rotate</span>
+        <button id="btn-reload-${stream.id}" class="card-header-btn px-2 py-1 text-[10px]" title="Refresh Live Edge">
+          <i data-lucide="rotate-cw" class="w-3 h-3 text-rose-400"></i>
+          <span class="hidden sm:inline">Refresh</span>
         </button>
-        <button id="btn-reload-${stream.id}" class="card-header-btn" title="Refresh Live Edge">
-          <span>Refresh</span>
-        </button>
-        <button id="btn-move-left-${stream.id}" class="card-header-btn px-1.5" title="Geser ke Kiri">
+        <button id="btn-move-left-${stream.id}" class="card-header-btn px-1.5 py-1 text-[11px]" title="Geser ke Kiri">
           <span>←</span>
         </button>
-        <button id="btn-move-right-${stream.id}" class="card-header-btn px-1.5" title="Geser ke Kanan">
+        <button id="btn-move-right-${stream.id}" class="card-header-btn px-1.5 py-1 text-[11px]" title="Geser ke Kanan">
           <span>→</span>
         </button>
-        <button id="btn-close-${stream.id}" class="card-header-btn btn-close" title="Tutup Layar">
-          <span>Tutup</span>
+        <button id="btn-close-${stream.id}" class="card-header-btn btn-close px-1.5 py-1" title="Tutup Layar">
+          <i data-lucide="x" class="w-3.5 h-3.5"></i>
         </button>
       </div>
     </div>
@@ -716,15 +714,7 @@ function renderStreamCard(stream) {
 
     <!-- Bottom Card Footer Strip (Dedicated Audio & Utility Controls) -->
     <div class="stream-card-footer">
-      <div class="flex items-center gap-1 sm:gap-1.5 flex-shrink-0">
-        <!-- Solo Audio Button -->
-        <button id="btn-solo-${stream.id}" class="btn-solo flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold transition ${
-          stream.id === State.soloStreamId ? 'bg-emerald-600 text-white shadow-sm' : 'bg-slate-800 text-slate-300 hover:text-white'
-        }" title="Solo Audio: Dengarkan stream ini saja">
-          <i data-lucide="headphones" class="w-3 h-3"></i>
-          <span class="hidden sm:inline">Solo</span>
-        </button>
-
+      <div class="flex items-center gap-1.5 flex-shrink-0">
         <!-- Mute Button -->
         <button id="btn-mute-${stream.id}" class="p-1 rounded bg-slate-800 text-slate-300 hover:text-white transition cursor-pointer" title="Mute/Unmute">
           <i data-lucide="${stream.isMuted ? 'volume-x' : 'volume-2'}" class="w-3.5 h-3.5"></i>
@@ -1026,12 +1016,6 @@ function moveStream(streamId, dir) {
  * Setup Individual Card Events
  */
 function setupCardEvents(stream, card, video) {
-  // Rotate Video 90 degrees
-  card.querySelector(`#btn-rotate-${stream.id}`)?.addEventListener('click', () => {
-    stream.rotation = ((stream.rotation || 0) + 90) % 360;
-    video.style.transform = stream.rotation ? `rotate(${stream.rotation}deg)` : '';
-  });
-
   // Move Stream Left in Grid
   card.querySelector(`#btn-move-left-${stream.id}`)?.addEventListener('click', () => {
     moveStream(stream.id, -1);
@@ -1040,11 +1024,6 @@ function setupCardEvents(stream, card, video) {
   // Move Stream Right in Grid
   card.querySelector(`#btn-move-right-${stream.id}`)?.addEventListener('click', () => {
     moveStream(stream.id, 1);
-  });
-
-  // Solo Audio
-  card.querySelector(`#btn-solo-${stream.id}`)?.addEventListener('click', () => {
-    toggleSoloAudio(stream.id);
   });
 
   // Mute / Unmute
@@ -1185,14 +1164,12 @@ function clearAllStreams() {
  */
 function toggleSoloAudio(streamId) {
   if (State.soloStreamId === streamId) {
-    // Toggle off solo: unmute all or leave active
     State.soloStreamId = null;
     State.activeStreams.forEach(stream => {
       stream.isMuted = false;
       if (stream.video) stream.video.muted = false;
       updateCardAudioUI(stream);
     });
-    document.querySelectorAll('.stream-card').forEach(card => card.classList.remove('audio-active'));
     return;
   }
 
@@ -1205,15 +1182,6 @@ function toggleSoloAudio(streamId) {
       stream.video.muted = stream.isMuted;
     }
     updateCardAudioUI(stream);
-  });
-
-  // Highlight active solo card
-  document.querySelectorAll('.stream-card').forEach(card => {
-    if (card.id === `card-${streamId}`) {
-      card.classList.add('audio-active');
-    } else {
-      card.classList.remove('audio-active');
-    }
   });
 }
 
@@ -1245,18 +1213,8 @@ function updateCardAudioUI(stream) {
   const card = document.getElementById(`card-${stream.id}`);
   if (!card) return;
 
-  const isSolo = stream.id === State.soloStreamId && !stream.isMuted;
-  const soloBtn = card.querySelector(`#btn-solo-${stream.id}`);
   const muteBtn = card.querySelector(`#btn-mute-${stream.id}`);
   const volInput = card.querySelector(`#vol-${stream.id}`);
-
-  if (soloBtn) {
-    if (isSolo) {
-      soloBtn.className = 'btn-solo flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold transition bg-emerald-600 text-white shadow-sm';
-    } else {
-      soloBtn.className = 'btn-solo flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold transition bg-slate-800 text-slate-300 hover:text-white';
-    }
-  }
 
   if (muteBtn) {
     muteBtn.innerHTML = `<i data-lucide="${stream.isMuted ? 'volume-x' : 'volume-2'}" class="w-3.5 h-3.5"></i>`;

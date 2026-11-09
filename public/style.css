@@ -160,12 +160,6 @@ html, body {
   border-color: rgba(244, 63, 94, 0.5) !important;
 }
 
-/* Audio Solo Active State */
-.stream-card.audio-active {
-  border-color: #10b981 !important;
-  box-shadow: 0 0 20px rgba(16, 185, 129, 0.35) !important;
-}
-
 /* Top Card Header Strip */
 .stream-card-header {
   display: flex !important;
