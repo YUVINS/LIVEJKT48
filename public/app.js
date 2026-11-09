@@ -114,17 +114,6 @@ function setupEventListeners() {
   document.getElementById('btn-clear-all')?.addEventListener('click', clearAllStreams);
   document.getElementById('btn-sync-all')?.addEventListener('click', syncAllStreams);
 
-  // Desktop Horizontal Wheel Scroll
-  const mainContainer = document.getElementById('main-container');
-  mainContainer?.addEventListener('wheel', (e) => {
-    if (window.innerWidth >= 768 && mainContainer.scrollWidth > mainContainer.clientWidth) {
-      if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
-        e.preventDefault();
-        mainContainer.scrollLeft += e.deltaY;
-      }
-    }
-  }, { passive: false });
-
   // Modal Open/Close
   const modal = document.getElementById('modal-add');
   document.getElementById('btn-open-add')?.addEventListener('click', () => openModal());
@@ -675,8 +664,9 @@ function renderStreamCard(stream) {
         <button id="btn-move-right-${stream.id}" class="card-header-btn px-1.5 py-1 text-[11px]" title="Geser ke Kanan">
           <span>→</span>
         </button>
-        <button id="btn-close-${stream.id}" class="card-header-btn btn-close px-1.5 py-1" title="Tutup Layar">
-          <i data-lucide="x" class="w-3.5 h-3.5"></i>
+        <button id="btn-close-${stream.id}" class="card-header-btn btn-close px-1.5 sm:px-2 py-1 text-[10px]" title="Tutup Layar">
+          <i data-lucide="x" class="w-3.5 h-3.5 text-rose-400"></i>
+          <span class="hidden sm:inline">Tutup</span>
         </button>
       </div>
     </div>
@@ -1237,12 +1227,14 @@ function updateGridDisplay() {
  */
 function updateCompanionPanel() {
   const panel = document.getElementById('single-companion-panel');
+  const mainContainer = document.getElementById('main-container');
   if (!panel) return;
 
   const count = State.activeStreams.length;
   if (count !== 1 || State.companionCollapsed) {
     panel.classList.add('hidden');
     panel.classList.remove('flex');
+    mainContainer?.classList.remove('single-stream-layout');
     if (State.companionInterval) {
       clearInterval(State.companionInterval);
       State.companionInterval = null;
@@ -1253,6 +1245,7 @@ function updateCompanionPanel() {
   // Exactly 1 stream
   panel.classList.remove('hidden');
   panel.classList.add('flex');
+  mainContainer?.classList.add('single-stream-layout');
   const stream = State.activeStreams[0];
 
   // Set avatar & info
