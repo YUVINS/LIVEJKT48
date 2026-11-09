@@ -1009,7 +1009,7 @@ function setupCardEvents(stream, card, video) {
   });
 
   // Fit / Fill Toggle
-  card.querySelector(`#btn-fit-${stream.id}`)?.addEventListener('click', () => {
+  const toggleFit = () => {
     const isCover = video.classList.contains('fit-cover');
     const fitBtn = card.querySelector(`#btn-fit-${stream.id}`);
 
@@ -1028,7 +1028,9 @@ function setupCardEvents(stream, card, video) {
         fitBtn.classList.remove('text-slate-300');
       }
     }
-  });
+  };
+  card.querySelector(`#btn-fit-${stream.id}`)?.addEventListener('click', toggleFit);
+  video.addEventListener('dblclick', toggleFit);
 
   // Real-Time Live Sync / Refresh
   card.querySelector(`#btn-reload-${stream.id}`)?.addEventListener('click', () => {
@@ -1381,7 +1383,7 @@ function applyLayout(layoutName, count) {
     return;
   }
   // Set base grid layout classes
-  grid.className = 'w-full max-w-4xl mx-auto grid gap-3 transition-all';
+  grid.className = 'w-full max-w-7xl mx-auto grid gap-3 transition-all';
   grid.setAttribute('data-count', Math.min(count, 9));
 
   if (layoutName === 'auto') {
