@@ -436,9 +436,90 @@ html, body {
   color: white;
 }
 
-/* Fullscreen support */
-:fullscreen .stream-card {
+/* ============================================================
+   Fullscreen Mode Styles (Optimized for Laptop & Desktop)
+   ============================================================ */
+
+/* 1. When an individual stream card is fullscreened (Per-card fullscreen) */
+.stream-card:fullscreen,
+.stream-card:-webkit-full-screen {
+  width: 100vw !important;
+  height: 100vh !important;
+  max-width: 100vw !important;
+  max-height: 100vh !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  background-color: #000 !important;
+  border: none !important;
   border-radius: 0 !important;
+  box-shadow: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  z-index: 99999 !important;
+}
+
+.stream-card:fullscreen .stream-card-header,
+.stream-card:-webkit-full-screen .stream-card-header {
+  width: 100% !important;
+  max-width: 100% !important;
+  background-color: rgba(15, 23, 42, 0.95) !important;
+  border-radius: 0 !important;
+  flex-shrink: 0 !important;
+  z-index: 10 !important;
+  padding: 0.5rem 1rem !important;
+}
+
+.stream-card:fullscreen .stream-card-footer,
+.stream-card:-webkit-full-screen .stream-card-footer {
+  width: 100% !important;
+  max-width: 100% !important;
+  background-color: rgba(15, 23, 42, 0.95) !important;
+  border-radius: 0 !important;
+  flex-shrink: 0 !important;
+  z-index: 10 !important;
+  padding: 0.5rem 1rem !important;
+}
+
+.stream-card:fullscreen .stream-video-container,
+.stream-card:-webkit-full-screen .stream-video-container {
+  flex: 1 1 0 !important;
+  height: calc(100vh - 84px) !important;
+  max-height: calc(100vh - 84px) !important;
+  width: auto !important;
+  aspect-ratio: 9 / 16 !important;
+  margin: 0 auto !important;
+  background-color: #000 !important;
+}
+
+.stream-card:fullscreen .stream-video,
+.stream-card:-webkit-full-screen .stream-video {
+  height: 100% !important;
+  width: 100% !important;
+  max-height: 100% !important;
+  max-width: 100% !important;
+  object-fit: contain !important;
+}
+
+/* 2. When the entire page is fullscreened via top navbar or 'F' key */
+:fullscreen #main-container,
+:-webkit-full-screen #main-container {
+  height: 100vh !important;
+  max-height: 100vh !important;
+  padding: 0.5rem !important;
+}
+
+:fullscreen .stream-card,
+:-webkit-full-screen .stream-card {
+  max-height: calc(100vh - 40px) !important;
+  border-radius: 0.75rem !important;
+}
+
+:fullscreen .stream-video-container,
+:-webkit-full-screen .stream-video-container {
+  height: calc(100vh - 115px) !important;
+  max-height: calc(100vh - 115px) !important;
 }
 
 /* Companion Panel */

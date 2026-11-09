@@ -92,6 +92,24 @@ function setupEventListeners() {
   // Fullscreen
   document.getElementById('btn-fullscreen')?.addEventListener('click', toggleFullscreen);
 
+  // Handle Fullscreen UI updates
+  document.addEventListener('fullscreenchange', () => {
+    const isFs = !!document.fullscreenElement;
+    const fsIcon = document.getElementById('icon-fullscreen');
+    if (fsIcon) fsIcon.setAttribute('data-lucide', isFs ? 'minimize-2' : 'maximize-2');
+
+    State.activeStreams.forEach(stream => {
+      const card = document.getElementById(`card-${stream.id}`);
+      if (!card) return;
+      const cardFsBtn = card.querySelector(`#btn-card-fs-${stream.id}`);
+      const isCardFs = document.fullscreenElement === card;
+      if (cardFsBtn) {
+        cardFsBtn.innerHTML = `<i data-lucide="${isCardFs ? 'minimize-2' : 'maximize-2'}" class="w-3.5 h-3.5"></i>`;
+      }
+    });
+    if (window.lucide) lucide.createIcons();
+  });
+
   // Clear all & Sync all
   document.getElementById('btn-clear-all')?.addEventListener('click', clearAllStreams);
   document.getElementById('btn-sync-all')?.addEventListener('click', syncAllStreams);
