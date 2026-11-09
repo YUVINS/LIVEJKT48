@@ -37,7 +37,7 @@
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans selection:bg-rose-500 selection:text-white">
 
   <!-- Top Navigation Bar -->
-  <header class="sticky top-0 z-40 bg-slate-900/95 backdrop-blur-md border-b border-slate-800 px-2.5 sm:px-4 py-2 sm:py-2.5 flex items-center justify-between gap-1.5 sm:gap-3 shadow-lg">
+  <header class="sticky top-0 z-40 bg-slate-900/95 backdrop-blur-md border-b border-slate-800 px-2.5 sm:px-4 py-2 sm:py-2.5 flex items-center justify-between gap-1.5 sm:gap-3 shadow-lg relative">
     <!-- Left: Logo & Brand -->
     <div class="flex items-center gap-1.5 sm:gap-2.5 min-w-0">
       <div class="relative flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-tr from-rose-600 to-pink-500 shadow-md shadow-rose-600/30 font-black text-white text-base sm:text-lg tracking-wider flex-shrink-0">
@@ -79,9 +79,9 @@
       </div>
     </div>
 
-    <!-- Active Live Avatars Quick Carousel (Desktop only) -->
-    <div id="live-members-carousel" class="hidden lg:flex items-center gap-2 overflow-x-auto max-w-md py-1 px-2 bg-slate-950/60 rounded-xl border border-slate-800/60">
-      <span class="text-xs text-slate-400 whitespace-nowrap pl-1">Live Now:</span>
+    <!-- Active Live Avatars Quick Carousel (Desktop only - Permanently Fixed at Horizontal Center) -->
+    <div id="live-members-carousel" class="hidden lg:flex absolute left-1/2 -translate-x-1/2 items-center gap-2 overflow-x-auto max-w-sm xl:max-w-md py-1 px-2.5 bg-slate-950/70 rounded-xl border border-slate-800/70 shadow-sm z-10 pointer-events-auto">
+      <span class="text-xs text-slate-400 whitespace-nowrap pl-0.5">Live Now:</span>
       <div id="live-members-avatars" class="flex items-center gap-1.5">
         <!-- Rendered by JS -->
       </div>
@@ -91,10 +91,10 @@
     <div class="hidden sm:flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
       <!-- Layout Preset Switcher -->
       <div class="relative">
-        <button id="btn-layout-dropdown" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-medium text-slate-200 border border-slate-700 transition" title="Pilih Tata Letak Layar">
-          <i data-lucide="layout-grid" class="w-4 h-4 text-rose-400"></i>
-          <span id="label-layout" class="hidden md:inline">Layout: Auto</span>
-          <i data-lucide="chevron-down" class="w-3 h-3 text-slate-400"></i>
+        <button id="btn-layout-dropdown" class="flex items-center justify-between w-[124px] px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-medium text-slate-200 border border-slate-700 transition" title="Pilih Tata Letak Layar">
+          <i data-lucide="layout-grid" class="w-4 h-4 text-rose-400 flex-shrink-0"></i>
+          <span id="label-layout" class="truncate mx-1">Layout: Auto</span>
+          <i data-lucide="chevron-down" class="w-3 h-3 text-slate-400 flex-shrink-0"></i>
         </button>
         <!-- Dropdown menu -->
         <div id="menu-layout" class="hidden absolute right-0 mt-1 w-44 rounded-xl bg-slate-900 border border-slate-800 shadow-2xl py-1 z-50 text-xs">
@@ -334,8 +334,8 @@
           Buka Semua yang Sedang Live
         </button>
         <button id="btn-empty-open-modal" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 font-medium text-slate-200 text-xs sm:text-sm border border-slate-700 flex items-center gap-2 transition cursor-pointer">
-          <i data-lucide="list-plus" class="w-4 h-4 text-emerald-400"></i>
-          Pilih dari Daftar Member
+          <i data-lucide="plus-circle" class="w-4 h-4 text-rose-400"></i>
+          Tambah Stream / URL
         </button>
       </div>
 
@@ -353,7 +353,7 @@
     </div>
   </main>
 
-  <!-- Modal: Tambah Stream / Pilih Member -->
+  <!-- Modal: Tambah Stream / Pilih Live -->
   <div id="modal-add" class="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm hidden flex items-center justify-center p-4">
     <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-2xl overflow-hidden shadow-2xl flex flex-col max-h-[85vh] animate-in fade-in zoom-in-95 duration-150">
       
@@ -365,7 +365,7 @@
           </div>
           <div>
             <h3 class="font-bold text-base text-white">Tambah Stream ke Multi-View</h3>
-            <p class="text-xs text-slate-400">Pilih live yang sedang aktif atau cari member JKT48</p>
+            <p class="text-xs text-slate-400">Pilih live yang sedang aktif atau masukkan Custom URL / Room ID</p>
           </div>
         </div>
         <button id="btn-close-modal" class="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition">
@@ -378,10 +378,6 @@
         <button id="tab-btn-live" class="tab-btn active px-4 py-2 border-b-2 border-rose-500 text-rose-400 font-semibold flex items-center gap-1.5">
           <span class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
           Sedang Live (<span id="tab-live-count">0</span>)
-        </button>
-        <button id="tab-btn-members" class="tab-btn px-4 py-2 border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-1.5">
-          <i data-lucide="users" class="w-3.5 h-3.5"></i>
-          Semua Member JKT48
         </button>
         <button id="tab-btn-custom" class="tab-btn px-4 py-2 border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-1.5">
           <i data-lucide="link" class="w-3.5 h-3.5"></i>
@@ -398,24 +394,11 @@
           </div>
           <div id="modal-live-empty" class="hidden text-center py-10 text-slate-400 text-xs">
             <i data-lucide="radio" class="w-8 h-8 mx-auto text-slate-500 mb-2"></i>
-            Saat ini tidak ada member JKT48 yang sedang live. Anda bisa mencoba tab <strong>Semua Member</strong> atau <strong>Custom URL</strong>.
+            Saat ini tidak ada member JKT48 yang sedang live. Anda bisa mencoba tab <strong>Custom URL / Room ID</strong>.
           </div>
         </div>
 
-        <!-- Tab 2: Roster Member -->
-        <div id="tab-pane-members" class="tab-pane hidden">
-          <div class="mb-3">
-            <div class="relative">
-              <i data-lucide="search" class="w-4 h-4 absolute left-3 top-3 text-slate-400"></i>
-              <input type="text" id="input-search-member" placeholder="Cari nama member (misal: Freya, Christy, Gracia)..." class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-9 pr-4 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-rose-500">
-            </div>
-          </div>
-          <div id="modal-member-roster" class="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-80 overflow-y-auto pr-1">
-            <!-- Rendered by JS -->
-          </div>
-        </div>
-
-        <!-- Tab 3: Custom URL -->
+        <!-- Tab 2: Custom URL -->
         <div id="tab-pane-custom" class="tab-pane hidden">
           <p class="text-xs text-slate-400 mb-3">
             Masukkan link live stream IDN, SHOWROOM URL, Room ID, atau direct .m3u8:

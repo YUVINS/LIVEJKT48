@@ -37,7 +37,6 @@ document.addEventListener('DOMContentLoaded', () => {
   // Ensure display reflects current active streams accurately
   updateGridDisplay();
 
-  fetchMembers();
   fetchLives();
 
   // Poll live status every 25 seconds
@@ -1464,9 +1463,9 @@ function setLayout(layoutName) {
     const names = {
       'auto': 'Layout: Auto',
       '1x1': 'Layout: 1x1',
-      '1x2': 'Layout: 1x2 (Samping)',
-      '2x1': 'Layout: 2x1 (Atas-Bawah)',
-      '3-focus': 'Layout: 3 (T-Grid)',
+      '1x2': 'Layout: 1x2',
+      '2x1': 'Layout: 2x1',
+      '3-focus': 'Layout: 3-Grid',
       '2x2': 'Layout: 2x2',
       '3x2': 'Layout: 3x2'
     };
@@ -1603,7 +1602,6 @@ function closeModal() {
 function setupModalTabs() {
   const tabs = [
     { btn: 'tab-btn-live', pane: 'tab-pane-live' },
-    { btn: 'tab-btn-members', pane: 'tab-pane-members' },
     { btn: 'tab-btn-custom', pane: 'tab-pane-custom' }
   ];
 
