@@ -30,12 +30,15 @@ const emptyStateLives = document.getElementById('empty-state-lives');
 document.addEventListener('DOMContentLoaded', () => {
   if (window.lucide) lucide.createIcons();
   setupEventListeners();
-  updateGridDisplay();
-  fetchMembers();
-  fetchLives();
 
   // Restore saved streams from localStorage if available
   restoreSavedSession();
+
+  // Ensure display reflects current active streams accurately
+  updateGridDisplay();
+
+  fetchMembers();
+  fetchLives();
 
   // Poll live status every 25 seconds
   setInterval(() => {
@@ -1469,12 +1472,20 @@ function setLayout(layoutName) {
     };
     label.textContent = names[layoutName] || 'Layout';
   }
-  applyLayout(layoutName, State.activeStreams.length);
+  if (State.activeStreams.length > 0) {
+    applyLayout(layoutName, State.activeStreams.length);
+  } else if (grid) {
+    grid.className = 'hidden';
+  }
 }
 
 function applyLayout(layoutName, count) {
+  if (count === 0) {
+    if (grid) grid.className = 'hidden';
+    return;
+  }
   // Set base grid layout classes
-  grid.className = 'w-full max-w-4xl mx-auto grid gap-3 transition-all flex-1 min-h-0';
+  grid.className = 'w-full max-w-4xl mx-auto grid gap-3 transition-all';
   grid.setAttribute('data-count', Math.min(count, 9));
 
   if (layoutName === 'auto') {
