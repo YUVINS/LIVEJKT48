@@ -441,8 +441,7 @@ html, body {
    ============================================================ */
 
 /* 1. When an individual stream card is fullscreened (Per-card fullscreen) */
-.stream-card:fullscreen,
-.stream-card:-webkit-full-screen {
+.stream-card:fullscreen {
   width: 100vw !important;
   height: 100vh !important;
   max-width: 100vw !important;
@@ -450,7 +449,7 @@ html, body {
   display: flex !important;
   flex-direction: column !important;
   justify-content: space-between !important;
-  align-items: center !important;
+  align-items: stretch !important;
   background-color: #000 !important;
   border: none !important;
   border-radius: 0 !important;
@@ -460,40 +459,108 @@ html, body {
   z-index: 99999 !important;
 }
 
-.stream-card:fullscreen .stream-card-header,
+.stream-card:-webkit-full-screen {
+  width: 100vw !important;
+  height: 100vh !important;
+  max-width: 100vw !important;
+  max-height: 100vh !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  align-items: stretch !important;
+  background-color: #000 !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  z-index: 99999 !important;
+}
+
+.stream-card:fullscreen .stream-card-header {
+  width: 100% !important;
+  max-width: 100% !important;
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.95) 0%, rgba(15, 23, 42, 0.7) 100%) !important;
+  border-bottom: 1px solid rgba(51, 65, 85, 0.4) !important;
+  border-radius: 0 !important;
+  flex-shrink: 0 !important;
+  z-index: 10 !important;
+  padding: 0.65rem 1.25rem !important;
+}
+
 .stream-card:-webkit-full-screen .stream-card-header {
   width: 100% !important;
   max-width: 100% !important;
-  background-color: rgba(15, 23, 42, 0.95) !important;
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.95) 0%, rgba(15, 23, 42, 0.7) 100%) !important;
+  border-bottom: 1px solid rgba(51, 65, 85, 0.4) !important;
   border-radius: 0 !important;
   flex-shrink: 0 !important;
   z-index: 10 !important;
-  padding: 0.5rem 1rem !important;
+  padding: 0.65rem 1.25rem !important;
 }
 
-.stream-card:fullscreen .stream-card-footer,
+.stream-card:fullscreen .stream-card-footer {
+  width: 100% !important;
+  max-width: 100% !important;
+  background: linear-gradient(0deg, rgba(15, 23, 42, 0.95) 0%, rgba(15, 23, 42, 0.7) 100%) !important;
+  border-top: 1px solid rgba(51, 65, 85, 0.4) !important;
+  border-radius: 0 !important;
+  flex-shrink: 0 !important;
+  z-index: 10 !important;
+  padding: 0.65rem 1.25rem !important;
+}
+
 .stream-card:-webkit-full-screen .stream-card-footer {
   width: 100% !important;
   max-width: 100% !important;
-  background-color: rgba(15, 23, 42, 0.95) !important;
+  background: linear-gradient(0deg, rgba(15, 23, 42, 0.95) 0%, rgba(15, 23, 42, 0.7) 100%) !important;
+  border-top: 1px solid rgba(51, 65, 85, 0.4) !important;
   border-radius: 0 !important;
   flex-shrink: 0 !important;
   z-index: 10 !important;
-  padding: 0.5rem 1rem !important;
+  padding: 0.65rem 1.25rem !important;
 }
 
-.stream-card:fullscreen .stream-video-container,
-.stream-card:-webkit-full-screen .stream-video-container {
-  flex: 1 1 0 !important;
-  height: calc(100vh - 84px) !important;
-  max-height: calc(100vh - 84px) !important;
-  width: auto !important;
-  aspect-ratio: 9 / 16 !important;
-  margin: 0 auto !important;
+.stream-card:fullscreen .stream-video-container {
+  flex: 1 1 auto !important;
+  height: 100% !important;
+  max-height: none !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  aspect-ratio: auto !important;
+  margin: 0 !important;
+  padding: 0 !important;
   background-color: #000 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  overflow: hidden !important;
 }
 
-.stream-card:fullscreen .stream-video,
+.stream-card:-webkit-full-screen .stream-video-container {
+  flex: 1 1 auto !important;
+  height: 100% !important;
+  max-height: none !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  aspect-ratio: auto !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background-color: #000 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  overflow: hidden !important;
+}
+
+.stream-card:fullscreen .stream-video {
+  height: 100% !important;
+  width: 100% !important;
+  max-height: 100% !important;
+  max-width: 100% !important;
+  object-fit: contain !important;
+}
+
 .stream-card:-webkit-full-screen .stream-video {
   height: 100% !important;
   width: 100% !important;
@@ -502,21 +569,39 @@ html, body {
   object-fit: contain !important;
 }
 
+.stream-card:fullscreen .stream-video.fit-cover {
+  object-fit: cover !important;
+}
+
+.stream-card:-webkit-full-screen .stream-video.fit-cover {
+  object-fit: cover !important;
+}
+
 /* 2. When the entire page is fullscreened via top navbar or 'F' key */
-:fullscreen #main-container,
+:fullscreen #main-container {
+  height: 100vh !important;
+  max-height: 100vh !important;
+  padding: 0.5rem !important;
+}
 :-webkit-full-screen #main-container {
   height: 100vh !important;
   max-height: 100vh !important;
   padding: 0.5rem !important;
 }
 
-:fullscreen .stream-card,
+:fullscreen .stream-card {
+  max-height: calc(100vh - 40px) !important;
+  border-radius: 0.75rem !important;
+}
 :-webkit-full-screen .stream-card {
   max-height: calc(100vh - 40px) !important;
   border-radius: 0.75rem !important;
 }
 
-:fullscreen .stream-video-container,
+:fullscreen .stream-video-container {
+  height: calc(100vh - 115px) !important;
+  max-height: calc(100vh - 115px) !important;
+}
 :-webkit-full-screen .stream-video-container {
   height: calc(100vh - 115px) !important;
   max-height: calc(100vh - 115px) !important;
