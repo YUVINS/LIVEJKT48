@@ -53,10 +53,9 @@ html, body {
 
 #empty-state {
   width: 100%;
-  max-width: 48rem;
+  max-width: 44rem;
   margin: 0 auto;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
+  padding-top: 0.5rem;
 }
 
 /* Auto Grid Layout Rules */

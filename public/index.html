@@ -248,7 +248,7 @@
     </div>
 
     <!-- Grid Element -->
-    <div id="stream-grid" class="w-full max-w-4xl mx-auto grid gap-3 transition-all flex-1 min-h-0">
+    <div id="stream-grid" class="hidden w-full max-w-4xl mx-auto grid gap-3 transition-all">
       <!-- Stream Cards will be inserted here dynamically -->
     </div>
 
@@ -314,37 +314,37 @@
     </aside>
 
     <!-- Empty State (Shown when no stream is in grid) -->
-    <div id="empty-state" class="w-full h-full max-w-xl mx-auto flex flex-col items-center justify-start p-4 sm:p-6 text-center py-4 sm:py-6 overflow-y-auto">
-      <div class="w-20 h-20 rounded-2xl bg-gradient-to-tr from-rose-600/20 to-sky-600/20 border border-rose-500/30 flex items-center justify-center mb-5 shadow-2xl shadow-rose-950/50">
-        <i data-lucide="tv" class="w-10 h-10 text-rose-400"></i>
+    <div id="empty-state" class="w-full max-w-xl mx-auto flex flex-col items-center justify-start pt-1 sm:pt-3 pb-6 px-4 sm:px-6 text-center">
+      <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-tr from-rose-600/20 to-sky-600/20 border border-rose-500/30 flex items-center justify-center mb-3 sm:mb-4 shadow-xl shadow-rose-950/40">
+        <i data-lucide="tv" class="w-7 h-7 sm:w-8 sm:h-8 text-rose-400"></i>
       </div>
-      <h2 class="text-xl sm:text-2xl font-bold text-white mb-2">Belum Ada Stream yang Aktif di Layar</h2>
-      <p class="text-sm text-slate-400 mb-6">
+      <h2 class="text-xl sm:text-2xl font-bold text-white mb-1.5 tracking-tight">Belum Ada Stream yang Aktif di Layar</h2>
+      <p class="text-xs sm:text-sm text-slate-400 mb-4 sm:mb-5 max-w-md">
         Pilih member JKT48 yang sedang live di bawah ini untuk mulai menonton multi-stream secara bersamaan.
       </p>
 
       <!-- Active lives cards in empty state -->
-      <div id="empty-state-lives" class="w-full grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
+      <div id="empty-state-lives" class="w-full grid grid-cols-1 sm:grid-cols-2 gap-2.5 mb-4 sm:mb-5 max-w-lg">
         <!-- Rendered by JS -->
       </div>
 
-      <div class="flex flex-wrap items-center justify-center gap-3">
-        <button id="btn-empty-add-all" class="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 font-semibold text-white text-xs sm:text-sm flex items-center gap-2 shadow-lg shadow-rose-600/30 transition">
+      <div class="flex flex-wrap items-center justify-center gap-2.5 mb-5">
+        <button id="btn-empty-add-all" class="px-4 py-2 rounded-xl bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-500 hover:to-pink-500 font-semibold text-white text-xs sm:text-sm flex items-center gap-2 shadow-lg shadow-rose-600/30 transition transform active:scale-95 cursor-pointer">
           <i data-lucide="play" class="w-4 h-4 fill-current"></i>
           Buka Semua yang Sedang Live
         </button>
-        <button id="btn-empty-open-modal" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 font-medium text-slate-200 text-xs sm:text-sm border border-slate-700 flex items-center gap-2 transition">
+        <button id="btn-empty-open-modal" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 font-medium text-slate-200 text-xs sm:text-sm border border-slate-700 flex items-center gap-2 transition cursor-pointer">
           <i data-lucide="list-plus" class="w-4 h-4 text-emerald-400"></i>
           Pilih dari Daftar Member
         </button>
       </div>
 
-      <!-- Elegant Creator Signature -->
-      <div class="mt-10 pt-6 w-full flex flex-col items-center justify-center gap-2.5">
-        <div class="h-px w-28 bg-gradient-to-r from-transparent via-slate-700/60 to-transparent"></div>
-        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-900/80 border border-slate-800/90 shadow-lg shadow-black/40 backdrop-blur-md hover:border-rose-500/40 transition-all duration-300">
-          <span class="text-[10px] uppercase tracking-[0.25em] text-slate-400 font-medium">Created by</span>
-          <span class="text-xs sm:text-sm font-black tracking-widest bg-gradient-to-r from-white via-rose-200 to-rose-400 bg-clip-text text-transparent drop-shadow-sm">
+      <!-- Creator Signature -->
+      <div class="w-full flex flex-col items-center justify-center gap-2 mt-4 pt-2">
+        <div class="h-px w-24 bg-gradient-to-r from-transparent via-slate-800 to-transparent"></div>
+        <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-slate-900/80 border border-slate-800/90 shadow-md">
+          <span class="text-[9px] uppercase tracking-[0.2em] text-slate-400 font-medium">Created by</span>
+          <span class="text-xs font-black tracking-widest bg-gradient-to-r from-white via-rose-200 to-rose-400 bg-clip-text text-transparent">
             YUVIN
           </span>
           <span class="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse"></span>

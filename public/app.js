@@ -30,6 +30,7 @@ const emptyStateLives = document.getElementById('empty-state-lives');
 document.addEventListener('DOMContentLoaded', () => {
   if (window.lucide) lucide.createIcons();
   setupEventListeners();
+  updateGridDisplay();
   fetchMembers();
   fetchLives();
 
