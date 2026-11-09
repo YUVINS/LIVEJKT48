@@ -114,6 +114,17 @@ function setupEventListeners() {
   document.getElementById('btn-clear-all')?.addEventListener('click', clearAllStreams);
   document.getElementById('btn-sync-all')?.addEventListener('click', syncAllStreams);
 
+  // Desktop Horizontal Wheel Scroll
+  const mainContainer = document.getElementById('main-container');
+  mainContainer?.addEventListener('wheel', (e) => {
+    if (window.innerWidth >= 768 && mainContainer.scrollWidth > mainContainer.clientWidth) {
+      if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+        e.preventDefault();
+        mainContainer.scrollLeft += e.deltaY;
+      }
+    }
+  }, { passive: false });
+
   // Modal Open/Close
   const modal = document.getElementById('modal-add');
   document.getElementById('btn-open-add')?.addEventListener('click', () => openModal());
@@ -630,6 +641,7 @@ function addStream(streamData) {
   updateGridDisplay();
   saveSession();
   renderLiveAvatarsCarousel(State.availableLives);
+  renderModalLiveList(State.availableLives);
 }
 
 /**
@@ -1101,6 +1113,7 @@ function removeStream(streamId) {
   updateGridDisplay();
   saveSession();
   renderLiveAvatarsCarousel(State.availableLives);
+  renderModalLiveList(State.availableLives);
 }
 
 /**
@@ -1129,6 +1142,7 @@ function clearAllStreams() {
   updateGridDisplay();
   saveSession();
   renderLiveAvatarsCarousel(State.availableLives);
+  renderModalLiveList(State.availableLives);
 }
 
 /**
@@ -1509,6 +1523,7 @@ function closeChatDrawer() {
 function openModal() {
   const modal = document.getElementById('modal-add');
   modal?.classList.remove('hidden');
+  renderModalLiveList(State.availableLives);
 }
 
 function closeModal() {

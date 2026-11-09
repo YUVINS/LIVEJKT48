@@ -111,68 +111,60 @@ html, body {
 
 /* ============================================================
    Desktop Responsive Layout (Optimized for comfortable viewing,
-   zero vertical scrolling, natural 9:16 aspect ratio)
+   zero vertical scrolling, natural 9:16 aspect ratio,
+   horizontal multi-view layout extending to the right)
    ============================================================ */
 
 @media (min-width: 768px) {
   #main-container {
     padding: 1rem 1.5rem !important;
-    overflow-y: auto !important;
-  }
-
-  #stream-grid {
-    gap: 1.25rem !important;
-    justify-content: center !important;
-    align-items: center !important;
-  }
-
-  /* Single Stream: perfectly centered, comfortable height */
-  .grid-layout-auto[data-count="1"],
-  .layout-1x1 {
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
     display: flex !important;
-    justify-content: center !important;
-    align-items: center !important;
-    width: 100% !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    justify-content: flex-start !important;
   }
 
-  .grid-layout-auto[data-count="1"] .stream-card,
-  .layout-1x1 .stream-card {
+  /* Desktop Multi-View Auto Layout:
+     Always line up horizontally side-by-side to the right ("ke kanan aja"),
+     never wrapping into rows downwards ("bukan kebawah") */
+  #stream-grid {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    gap: 1.25rem !important;
+    width: max-content !important;
+    min-width: 100% !important;
     max-width: none !important;
-    width: auto !important;
+    padding: 0.25rem 0.5rem !important;
     margin: 0 auto !important;
   }
 
-  /* 2 Streams: side by side, centered together horizontally */
+  /* Centered when 1, 2, or 3 streams */
+  .grid-layout-auto[data-count="1"],
   .grid-layout-auto[data-count="2"],
-  .layout-1x2 {
-    display: flex !important;
-    justify-content: center !important;
-    align-items: center !important;
-    flex-wrap: nowrap !important;
-    gap: 1.5rem !important;
-    width: 100% !important;
-  }
-
-  .grid-layout-auto[data-count="2"] .stream-card,
-  .layout-1x2 .stream-card {
-    max-width: none !important;
-    width: auto !important;
-    flex: 0 0 auto !important;
-    margin: 0 !important;
-  }
-
-  /* 3 Streams: side by side, centered */
   .grid-layout-auto[data-count="3"],
+  .layout-1x1,
+  .layout-1x2,
   .layout-3x1 {
-    display: flex !important;
     justify-content: center !important;
-    align-items: center !important;
-    flex-wrap: nowrap !important;
-    gap: 1rem !important;
-    width: 100% !important;
   }
 
-  .grid-layout-auto[data-count="3"] .stream-card,
+  /* When 4 or more streams, start from left and extend smoothly to the right */
+  .grid-layout-auto[data-count="4"],
+  .grid-layout-auto[data-count="5"],
+  .grid-layout-auto[data-count="6"],
+  .grid-layout-auto[data-count="7"],
+  .grid-layout-auto[data-count="8"],
+  .grid-layout-auto[data-count="9"] {
+    justify-content: flex-start !important;
+  }
+
+  .grid-layout-auto .stream-card,
+  .layout-1x1 .stream-card,
+  .layout-1x2 .stream-card,
   .layout-3x1 .stream-card {
     max-width: none !important;
     width: auto !important;
@@ -185,6 +177,8 @@ html, body {
     max-height: calc(100vh - 120px) !important;
     max-height: calc(100dvh - 120px) !important;
     width: auto !important;
+    flex: 0 0 auto !important;
+    margin: 0 !important;
     box-shadow: 0 15px 35px -5px rgba(0, 0, 0, 0.6) !important;
   }
 
@@ -198,7 +192,7 @@ html, body {
     flex: 0 0 auto !important;
   }
 
-  /* 2x1 Vertical layout */
+  /* Explicit Grid Presets (if manually chosen by user) */
   .layout-2x1 {
     display: flex !important;
     flex-direction: column !important;
@@ -214,7 +208,6 @@ html, body {
     max-height: 290px !important;
   }
 
-  /* 2x2 and 3x2 Grid layouts (2 rows) */
   .layout-2x2 {
     display: grid !important;
     grid-template-columns: repeat(2, min-content) !important;
@@ -246,27 +239,20 @@ html, body {
   }
 }
 
-/* Extra wide desktop: 4 streams auto layout in 1 single row */
-@media (min-width: 1400px) {
-  .grid-layout-auto[data-count="4"] {
-    display: flex !important;
-    justify-content: center !important;
-    align-items: center !important;
-    flex-wrap: nowrap !important;
-    gap: 0.75rem !important;
-    width: 100% !important;
-  }
-  .grid-layout-auto[data-count="4"] .stream-card {
-    max-height: calc(100vh - 120px) !important;
-    width: auto !important;
-    flex: 0 0 auto !important;
-  }
-  .grid-layout-auto[data-count="4"] .stream-video-container {
-    height: calc(100vh - 195px) !important;
-    max-height: 520px !important;
-    width: auto !important;
-    aspect-ratio: 9 / 16 !important;
-  }
+/* Custom Sleek Scrollbar for Desktop Horizontal Multi-view */
+#main-container::-webkit-scrollbar {
+  height: 8px;
+}
+#main-container::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.7);
+  border-radius: 9999px;
+}
+#main-container::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 9999px;
+}
+#main-container::-webkit-scrollbar-thumb:hover {
+  background: #f43f5e;
 }
 
 /* ============================================================
