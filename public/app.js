@@ -96,11 +96,6 @@ function setupEventListeners() {
   document.getElementById('btn-clear-all')?.addEventListener('click', clearAllStreams);
   document.getElementById('btn-sync-all')?.addEventListener('click', syncAllStreams);
 
-  // Multiview Top Hero & Live Tray Buttons (Reference Design)
-  document.getElementById('btn-hero-home')?.addEventListener('click', clearAllStreams);
-  document.getElementById('btn-hero-sync-all')?.addEventListener('click', syncAllStreams);
-  document.getElementById('btn-tray-clear')?.addEventListener('click', clearAllStreams);
-
   // Modal Open/Close
   const modal = document.getElementById('modal-add');
   document.getElementById('btn-open-add')?.addEventListener('click', () => openModal());
@@ -260,7 +255,6 @@ async function fetchLives(isBackground = false) {
 
     // Update Carousel & Lists
     renderLiveAvatarsCarousel(State.availableLives);
-    renderMultiviewLiveTray(State.availableLives);
     renderModalLiveList(State.availableLives);
     renderEmptyStateLives(State.availableLives);
 
@@ -312,46 +306,6 @@ function renderLiveAvatarsCarousel(lives) {
     });
 
     liveAvatarsContainer.appendChild(btn);
-  });
-}
-
-/**
- * Render Multiview Live Tray (Reference layout: MULTI-VIEW / Pilih live member)
- */
-function renderMultiviewLiveTray(lives) {
-  const container = document.getElementById('multiview-tray-avatars');
-  if (!container) return;
-  container.innerHTML = '';
-
-  if (!lives || lives.length === 0) {
-    container.innerHTML = '<span class="text-xs text-slate-500 italic py-2">Sedang tidak ada live aktif</span>';
-    return;
-  }
-
-  lives.forEach(live => {
-    const isAdded = State.activeStreams.some(s => s.id === live.id);
-    const item = document.createElement('div');
-    item.className = `tray-member-item ${isAdded ? 'active' : ''}`;
-    item.title = isAdded ? `Klik untuk menutup live ${live.name}` : `Klik untuk tonton ${live.name}`;
-
-    const nick = live.member_nick || (live.name ? live.name.split(' ')[0] : 'Member');
-
-    item.innerHTML = `
-      <div class="tray-member-avatar-box">
-        <img src="${live.avatar || 'https://via.placeholder.com/80'}" class="w-full h-full object-cover" onerror="this.src='https://via.placeholder.com/80'">
-      </div>
-      <span class="text-[11px] font-medium text-slate-300 truncate max-w-[62px] text-center">${nick}</span>
-    `;
-
-    item.addEventListener('click', () => {
-      if (isAdded) {
-        removeStream(live.id);
-      } else {
-        addStream(live);
-      }
-    });
-
-    container.appendChild(item);
   });
 }
 
@@ -1127,7 +1081,6 @@ function removeStream(streamId) {
   updateGridDisplay();
   saveSession();
   renderLiveAvatarsCarousel(State.availableLives);
-  renderMultiviewLiveTray(State.availableLives);
 }
 
 /**
@@ -1156,7 +1109,6 @@ function clearAllStreams() {
   updateGridDisplay();
   saveSession();
   renderLiveAvatarsCarousel(State.availableLives);
-  renderMultiviewLiveTray(State.availableLives);
 }
 
 /**
@@ -1231,29 +1183,16 @@ function updateCardAudioUI(stream) {
  */
 function updateGridDisplay() {
   const count = State.activeStreams.length;
-  const heroCard = document.getElementById('multiview-hero-card');
-  const liveTray = document.getElementById('multiview-live-tray');
-  const heroCount = document.getElementById('hero-streams-count');
-
-  if (heroCount) {
-    heroCount.textContent = `${count} stream aktif`;
-  }
 
   if (count === 0) {
     grid.classList.add('hidden');
     emptyState.classList.remove('hidden');
-    heroCard?.classList.add('hidden');
-    liveTray?.classList.add('hidden');
     document.getElementById('single-companion-panel')?.classList.add('hidden');
     return;
   }
 
   grid.classList.remove('hidden');
   emptyState.classList.add('hidden');
-  heroCard?.classList.remove('hidden');
-  liveTray?.classList.remove('hidden');
-
-  renderMultiviewLiveTray(State.availableLives);
 
   applyLayout(State.currentLayout, count);
   updateCompanionPanel();

@@ -202,51 +202,6 @@
 
   <!-- Main Multi-View Grid Container -->
   <main id="main-container" class="flex-1 min-h-0 relative p-2.5 sm:p-4 overflow-y-auto bg-slate-950 flex flex-col items-center justify-start gap-3 sm:gap-4">
-    <!-- Top Hero Card (JKT48 LIVE PLAYER / Multi-view) -->
-    <div id="multiview-hero-card" class="hidden w-full max-w-4xl mx-auto bg-slate-900/90 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-xl flex-shrink-0 transition-all">
-      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-        <div>
-          <span class="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-slate-400">JKT48 LIVE PLAYER</span>
-          <h2 class="text-2xl sm:text-3xl font-black text-white tracking-tight mt-0.5">Multi-view</h2>
-          <div class="mt-2 flex items-center gap-2">
-            <span id="hero-streams-badge" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-800 border border-slate-700 text-xs font-semibold text-slate-300">
-              <span class="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse"></span>
-              <span id="hero-streams-count">0 stream aktif</span>
-            </span>
-          </div>
-        </div>
-        <div class="flex items-center gap-2">
-          <button id="btn-hero-home" class="px-3.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-semibold text-slate-300 hover:text-white transition flex items-center gap-1.5 cursor-pointer">
-            <i data-lucide="home" class="w-3.5 h-3.5"></i>
-            <span>Kembali ke home</span>
-          </button>
-          <button id="btn-hero-sync-all" class="px-3.5 py-1.5 rounded-xl bg-rose-950/70 hover:bg-rose-900/80 border border-rose-800/50 text-xs font-semibold text-rose-300 hover:text-white transition flex items-center gap-1.5 cursor-pointer">
-            <i data-lucide="zap" class="w-3.5 h-3.5 text-rose-400"></i>
-            <span>Sinkron Semua</span>
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Live Member Quick Tray (MULTI-VIEW / Pilih live member) -->
-    <div id="multiview-live-tray" class="hidden w-full max-w-4xl mx-auto bg-slate-900/90 border border-slate-800 rounded-2xl p-3 sm:p-4 shadow-xl flex-shrink-0 transition-all">
-      <div class="flex items-center justify-between mb-3">
-        <div class="flex items-center gap-2">
-          <span class="text-[10px] font-bold uppercase tracking-wider text-sky-400">MULTI-VIEW</span>
-          <h3 class="text-sm sm:text-base font-bold text-white">Pilih live member</h3>
-        </div>
-        <div class="flex items-center gap-2">
-          <button id="btn-tray-clear" class="text-xs text-slate-400 hover:text-rose-400 font-medium transition cursor-pointer">
-            Kosongkan
-          </button>
-        </div>
-      </div>
-      <!-- Horizontal Avatars Row -->
-      <div id="multiview-tray-avatars" class="flex items-center gap-3 overflow-x-auto pb-1 scrollbar-none">
-        <!-- Injected by JS: member avatars with name underneath -->
-      </div>
-    </div>
-
     <!-- Grid Element -->
     <div id="stream-grid" class="hidden w-full max-w-4xl mx-auto grid gap-3 transition-all">
       <!-- Stream Cards will be inserted here dynamically -->
