@@ -1611,10 +1611,10 @@ function setupModalTabs() {
         const b = document.getElementById(t.btn);
         const p = document.getElementById(t.pane);
         if (t.btn === tab.btn) {
-          b.className = 'tab-btn active px-4 py-2 border-b-2 border-rose-500 text-rose-400 font-semibold flex items-center gap-1.5';
+          b.className = 'tab-btn active flex-1 justify-center py-2.5 px-2 border-b-2 border-rose-500 text-rose-400 font-semibold flex items-center gap-1.5 whitespace-nowrap cursor-pointer transition';
           p.classList.remove('hidden');
         } else {
-          b.className = 'tab-btn px-4 py-2 border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-1.5';
+          b.className = 'tab-btn flex-1 justify-center py-2.5 px-2 border-b-2 border-transparent text-slate-400 hover:text-slate-200 font-medium flex items-center gap-1.5 whitespace-nowrap cursor-pointer transition';
           p.classList.add('hidden');
         }
       });
