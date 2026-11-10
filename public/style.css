@@ -214,39 +214,72 @@ html, body {
     width: 100% !important;
   }
 
-  /* 3 Streams: 3 columns centered */
+  /* 3 Streams: 3 columns centered in 1 row */
   .grid-layout-auto[data-count="3"],
   .layout-3x1,
   .layout-3-focus {
     display: grid !important;
-    grid-template-columns: repeat(3, minmax(0, 360px)) !important;
+    grid-template-columns: repeat(3, minmax(0, 310px)) !important;
     justify-content: center !important;
-    gap: 1rem !important;
+    gap: 0.75rem !important;
     width: 100% !important;
+    max-width: 72rem !important;
   }
 
-  /* 4 Streams: 4 columns across */
+  .grid-layout-auto[data-count="3"] .stream-card,
+  .layout-3x1 .stream-card,
+  .layout-3-focus .stream-card,
+  .grid-layout-auto[data-count="4"] .stream-card {
+    max-height: calc(100vh - 120px) !important;
+    max-height: calc(100dvh - 120px) !important;
+  }
+
+  .grid-layout-auto[data-count="3"] .stream-video-container,
+  .layout-3x1 .stream-video-container,
+  .layout-3-focus .stream-video-container,
+  .grid-layout-auto[data-count="4"] .stream-video-container {
+    max-height: calc(100vh - 180px) !important;
+    max-height: calc(100dvh - 180px) !important;
+  }
+
+  /* 4 Streams: 4 columns across in 1 row */
   .grid-layout-auto[data-count="4"] {
     display: grid !important;
     grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
     justify-content: center !important;
-    gap: 1rem !important;
+    gap: 0.75rem !important;
     width: 100% !important;
     max-width: 90rem !important;
   }
 
-  /* 5, 6, 7, 8, 9+ Streams (Reference Layout: 4 columns per row!) */
+  /* Multi-stream 5 & 6 streams in Auto mode: 3x2 grid fitting on screen without scrolling */
   .grid-layout-auto[data-count="5"],
-  .grid-layout-auto[data-count="6"],
+  .grid-layout-auto[data-count="6"] {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 215px)) !important;
+    grid-template-columns: repeat(3, minmax(0, min(220px, calc(((100vh - 125px) / 2 - 58px) * 9 / 16)))) !important;
+    grid-template-columns: repeat(3, minmax(0, min(220px, calc(((100dvh - 125px) / 2 - 58px) * 9 / 16)))) !important;
+    justify-content: center !important;
+    align-content: center !important;
+    gap: 0.65rem !important;
+    width: 100% !important;
+    max-width: 720px !important;
+    margin: 0 auto !important;
+  }
+
+  /* 7, 8, 9+ Streams in Auto mode: 4 columns compact grid */
   .grid-layout-auto[data-count="7"],
   .grid-layout-auto[data-count="8"],
   .grid-layout-auto[data-count="9"] {
     display: grid !important;
-    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
-    justify-content: start !important;
-    gap: 1rem !important;
+    grid-template-columns: repeat(4, minmax(0, 210px)) !important;
+    grid-template-columns: repeat(4, minmax(0, min(215px, calc(((100vh - 125px) / 2 - 58px) * 9 / 16)))) !important;
+    justify-content: center !important;
+    align-content: center !important;
+    gap: 0.65rem !important;
     width: 100% !important;
-    max-width: 90rem !important;
+    max-width: 920px !important;
+    margin: 0 auto !important;
   }
 
   /* Explicit Grid Presets */
@@ -256,19 +289,104 @@ html, body {
     justify-content: center !important;
     gap: 1rem !important;
   }
+
+  /* 4 Layar (2x2): 2 di atas, 2 di bawah - muat tanpa scroll */
   .layout-2x2 {
     display: grid !important;
-    grid-template-columns: repeat(2, minmax(0, 380px)) !important;
+    grid-template-columns: repeat(2, minmax(0, 260px)) !important;
+    grid-template-columns: repeat(2, minmax(0, min(260px, calc(((100vh - 125px) / 2 - 58px) * 9 / 16)))) !important;
+    grid-template-columns: repeat(2, minmax(0, min(260px, calc(((100dvh - 125px) / 2 - 58px) * 9 / 16)))) !important;
     justify-content: center !important;
-    gap: 1rem !important;
+    align-content: center !important;
+    gap: 0.75rem !important;
     width: 100% !important;
+    max-width: 580px !important;
+    margin: 0 auto !important;
   }
+
+  /* 6 Layar (3x2): 3 di atas berjejer, 3 di bawah berjejer - muat sekaligus di PC tanpa harus scroll */
   .layout-3x2 {
     display: grid !important;
-    grid-template-columns: repeat(3, minmax(0, 360px)) !important;
+    grid-template-columns: repeat(3, minmax(0, 215px)) !important;
+    grid-template-columns: repeat(3, minmax(0, min(220px, calc(((100vh - 125px) / 2 - 58px) * 9 / 16)))) !important;
+    grid-template-columns: repeat(3, minmax(0, min(220px, calc(((100dvh - 125px) / 2 - 58px) * 9 / 16)))) !important;
     justify-content: center !important;
-    gap: 1rem !important;
+    align-content: center !important;
+    gap: 0.65rem !important;
     width: 100% !important;
+    max-width: 720px !important;
+    margin: 0 auto !important;
+  }
+
+  /* Card & Video Sizing Constraints for 2-row layouts (3x2, 2x2, auto 5-9) */
+  .layout-3x2 .stream-card,
+  .layout-2x2 .stream-card,
+  .grid-layout-auto[data-count="5"] .stream-card,
+  .grid-layout-auto[data-count="6"] .stream-card,
+  .grid-layout-auto[data-count="7"] .stream-card,
+  .grid-layout-auto[data-count="8"] .stream-card,
+  .grid-layout-auto[data-count="9"] .stream-card {
+    width: 100% !important;
+    height: auto !important;
+    max-height: calc((100vh - 125px) / 2) !important;
+    max-height: calc((100dvh - 125px) / 2) !important;
+    margin: 0 auto !important;
+  }
+
+  .layout-3x2 .stream-video-container,
+  .layout-2x2 .stream-video-container,
+  .grid-layout-auto[data-count="5"] .stream-video-container,
+  .grid-layout-auto[data-count="6"] .stream-video-container,
+  .grid-layout-auto[data-count="7"] .stream-video-container,
+  .grid-layout-auto[data-count="8"] .stream-video-container,
+  .grid-layout-auto[data-count="9"] .stream-video-container {
+    width: 100% !important;
+    aspect-ratio: 9 / 16 !important;
+    height: auto !important;
+    max-height: calc(((100vh - 125px) / 2) - 58px) !important;
+    max-height: calc(((100dvh - 125px) / 2) - 58px) !important;
+  }
+
+  .layout-3x2 .stream-card-header,
+  .layout-2x2 .stream-card-header,
+  .grid-layout-auto[data-count="5"] .stream-card-header,
+  .grid-layout-auto[data-count="6"] .stream-card-header,
+  .grid-layout-auto[data-count="7"] .stream-card-header,
+  .grid-layout-auto[data-count="8"] .stream-card-header,
+  .grid-layout-auto[data-count="9"] .stream-card-header {
+    padding: 0.25rem 0.45rem !important;
+    gap: 0.2rem !important;
+  }
+
+  .layout-3x2 .stream-card-footer,
+  .layout-2x2 .stream-card-footer,
+  .grid-layout-auto[data-count="5"] .stream-card-footer,
+  .grid-layout-auto[data-count="6"] .stream-card-footer,
+  .grid-layout-auto[data-count="7"] .stream-card-footer,
+  .grid-layout-auto[data-count="8"] .stream-card-footer,
+  .grid-layout-auto[data-count="9"] .stream-card-footer {
+    padding: 0.2rem 0.45rem !important;
+  }
+
+  .layout-3x2 .card-header-btn,
+  .layout-2x2 .card-header-btn,
+  .grid-layout-auto[data-count="5"] .card-header-btn,
+  .grid-layout-auto[data-count="6"] .card-header-btn,
+  .grid-layout-auto[data-count="7"] .card-header-btn,
+  .grid-layout-auto[data-count="8"] .card-header-btn,
+  .grid-layout-auto[data-count="9"] .card-header-btn {
+    padding: 0.2rem 0.35rem !important;
+    font-size: 9px !important;
+  }
+
+  .layout-3x2 .stream-vol-slider,
+  .layout-2x2 .stream-vol-slider,
+  .grid-layout-auto[data-count="5"] .stream-vol-slider,
+  .grid-layout-auto[data-count="6"] .stream-vol-slider,
+  .grid-layout-auto[data-count="7"] .stream-vol-slider,
+  .grid-layout-auto[data-count="8"] .stream-vol-slider,
+  .grid-layout-auto[data-count="9"] .stream-vol-slider {
+    width: 36px !important;
   }
 }
 
