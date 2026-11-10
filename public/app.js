@@ -1391,7 +1391,8 @@ function setLayout(layoutName) {
       '2x1': 'Layout: 2x1',
       '3-focus': 'Layout: 3-Grid',
       '2x2': 'Layout: 2x2',
-      '3x2': 'Layout: 3x2'
+      '3x2': 'Layout: 3x2',
+      '3x3': 'Layout: 3x3'
     };
     label.textContent = names[layoutName] || 'Layout';
   }
