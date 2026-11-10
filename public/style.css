@@ -105,7 +105,9 @@ html, body {
 .grid-layout-auto[data-count="7"],
 .grid-layout-auto[data-count="8"],
 .grid-layout-auto[data-count="9"],
-.layout-3x2 {
+.grid-layout-auto[data-count="10"],
+.layout-3x2,
+.layout-3x3 {
   display: grid !important;
   grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
   gap: 0.5rem !important;
@@ -148,8 +150,10 @@ html, body {
   .grid-layout-auto[data-count="7"],
   .grid-layout-auto[data-count="8"],
   .grid-layout-auto[data-count="9"],
+  .grid-layout-auto[data-count="10"],
   .layout-2x2,
-  .layout-3x2 {
+  .layout-3x2,
+  .layout-3x3 {
     display: grid !important;
     grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
     gap: 0.75rem !important;
@@ -293,25 +297,91 @@ html, body {
     margin: 0 auto !important;
   }
 
-  /* 5 & 6 Streams (2 baris x 3 kolom): muat di 1 layar tanpa scroll */
+  /* ============================================================
+     Multi-View 5-Per-Row Layout (Max 5 Streams Row 1, Max 5 Streams Row 2)
+     Tata letak menyamping (horizontal side-by-side) seperti layout 1x1,
+     muat hingga 10 member live tanpa harus scroll ke bawah!
+     ============================================================ */
+
+  /* 5 to 10 Streams & Layout: 3x2 / 3x3 */
   .grid-layout-auto[data-count="5"],
   .grid-layout-auto[data-count="6"],
-  .layout-3x2 {
+  .grid-layout-auto[data-count="7"],
+  .grid-layout-auto[data-count="8"],
+  .grid-layout-auto[data-count="9"],
+  .grid-layout-auto[data-count="10"],
+  .layout-3x2,
+  .layout-3x3 {
     display: grid !important;
-    grid-template-columns: repeat(3, minmax(0, 290px)) !important;
+    grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
     justify-content: center !important;
     align-content: center !important;
-    gap: 0.65rem !important;
+    gap: 0.55rem !important;
     width: 100% !important;
-    max-width: 920px !important;
+    max-width: min(98vw, 1720px) !important;
     margin: 0 auto !important;
   }
 
+  /* Center nicely if fewer than 5 streams when user picks 3x2 explicitly */
+  .layout-3x2[data-count="1"] {
+    display: flex !important;
+    justify-content: center !important;
+  }
+  .layout-3x2[data-count="2"] {
+    grid-template-columns: repeat(2, minmax(0, 380px)) !important;
+  }
+  .layout-3x2[data-count="3"] {
+    grid-template-columns: repeat(3, minmax(0, 320px)) !important;
+  }
+  .layout-3x2[data-count="4"] {
+    grid-template-columns: repeat(4, minmax(0, 290px)) !important;
+  }
+
+  /* 1 Row (Tepat 5 streams): baris pertama penuh 5 tampilan */
   .grid-layout-auto[data-count="5"] .stream-card,
-  .grid-layout-auto[data-count="6"] .stream-card,
-  .layout-3x2 .stream-card {
+  .layout-3x2[data-count="5"] .stream-card {
     width: 100% !important;
-    max-width: 290px !important;
+    max-width: 330px !important;
+    height: calc(100vh - 120px) !important;
+    height: calc(100dvh - 120px) !important;
+    max-height: calc(100vh - 120px) !important;
+    max-height: calc(100dvh - 120px) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    margin: 0 auto !important;
+    border-radius: 0.85rem !important;
+  }
+
+  .grid-layout-auto[data-count="5"] .stream-video-container,
+  .layout-3x2[data-count="5"] .stream-video-container {
+    flex: 1 1 auto !important;
+    width: 100% !important;
+    height: calc(100vh - 180px) !important;
+    height: calc(100dvh - 180px) !important;
+    max-height: calc(100vh - 180px) !important;
+    max-height: calc(100dvh - 180px) !important;
+    aspect-ratio: 9 / 16 !important;
+    margin: 0 auto !important;
+  }
+
+  /* 2 Rows (6 hingga 10 streams):
+     Baris pertama maks 5 tampilan, baris kedua maks 5 tampilan.
+     Tinggi tiap kartu disesuaikan agar kedua baris muat di 1 layar tanpa scroll! */
+  .grid-layout-auto[data-count="6"] .stream-card,
+  .grid-layout-auto[data-count="7"] .stream-card,
+  .grid-layout-auto[data-count="8"] .stream-card,
+  .grid-layout-auto[data-count="9"] .stream-card,
+  .grid-layout-auto[data-count="10"] .stream-card,
+  .layout-3x2 .stream-card,
+  .layout-3x2[data-count="6"] .stream-card,
+  .layout-3x2[data-count="7"] .stream-card,
+  .layout-3x2[data-count="8"] .stream-card,
+  .layout-3x2[data-count="9"] .stream-card,
+  .layout-3x2[data-count="10"] .stream-card,
+  .layout-3x3 .stream-card {
+    width: 100% !important;
+    max-width: 330px !important;
     height: calc((100vh - 120px) / 2) !important;
     height: calc((100dvh - 120px) / 2) !important;
     max-height: calc((100vh - 120px) / 2) !important;
@@ -323,9 +393,18 @@ html, body {
     border-radius: 0.85rem !important;
   }
 
-  .grid-layout-auto[data-count="5"] .stream-video-container,
   .grid-layout-auto[data-count="6"] .stream-video-container,
-  .layout-3x2 .stream-video-container {
+  .grid-layout-auto[data-count="7"] .stream-video-container,
+  .grid-layout-auto[data-count="8"] .stream-video-container,
+  .grid-layout-auto[data-count="9"] .stream-video-container,
+  .grid-layout-auto[data-count="10"] .stream-video-container,
+  .layout-3x2 .stream-video-container,
+  .layout-3x2[data-count="6"] .stream-video-container,
+  .layout-3x2[data-count="7"] .stream-video-container,
+  .layout-3x2[data-count="8"] .stream-video-container,
+  .layout-3x2[data-count="9"] .stream-video-container,
+  .layout-3x2[data-count="10"] .stream-video-container,
+  .layout-3x3 .stream-video-container {
     flex: 1 1 auto !important;
     width: 100% !important;
     height: calc(((100vh - 120px) / 2) - 58px) !important;
@@ -336,139 +415,61 @@ html, body {
     margin: 0 auto !important;
   }
 
+  /* Header & Footer styling for 5-column layout */
   .grid-layout-auto[data-count="5"] .stream-card-header,
   .grid-layout-auto[data-count="6"] .stream-card-header,
-  .layout-3x2 .stream-card-header {
-    padding: 0.25rem 0.5rem !important;
+  .grid-layout-auto[data-count="7"] .stream-card-header,
+  .grid-layout-auto[data-count="8"] .stream-card-header,
+  .grid-layout-auto[data-count="9"] .stream-card-header,
+  .grid-layout-auto[data-count="10"] .stream-card-header,
+  .layout-3x2 .stream-card-header,
+  .layout-3x3 .stream-card-header {
+    padding: 0.2rem 0.45rem !important;
     min-height: 28px !important;
     max-height: 30px !important;
-  }
-
-  .grid-layout-auto[data-count="5"] .stream-card-footer,
-  .grid-layout-auto[data-count="6"] .stream-card-footer,
-  .layout-3x2 .stream-card-footer {
-    padding: 0.25rem 0.5rem !important;
-    min-height: 28px !important;
-    max-height: 30px !important;
+    gap: 0.2rem !important;
+    flex-wrap: nowrap !important;
+    overflow: hidden !important;
   }
 
   .grid-layout-auto[data-count="5"] .card-header-btn,
   .grid-layout-auto[data-count="6"] .card-header-btn,
-  .layout-3x2 .card-header-btn {
-    padding: 0.2rem 0.4rem !important;
+  .grid-layout-auto[data-count="7"] .card-header-btn,
+  .grid-layout-auto[data-count="8"] .card-header-btn,
+  .grid-layout-auto[data-count="9"] .card-header-btn,
+  .grid-layout-auto[data-count="10"] .card-header-btn,
+  .layout-3x2 .card-header-btn,
+  .layout-3x3 .card-header-btn {
+    padding: 0.15rem 0.35rem !important;
     font-size: 9.5px !important;
+    border-radius: 0.35rem !important;
+    gap: 0.15rem !important;
+    flex-shrink: 0 !important;
+  }
+
+  .grid-layout-auto[data-count="5"] .stream-card-footer,
+  .grid-layout-auto[data-count="6"] .stream-card-footer,
+  .grid-layout-auto[data-count="7"] .stream-card-footer,
+  .grid-layout-auto[data-count="8"] .stream-card-footer,
+  .grid-layout-auto[data-count="9"] .stream-card-footer,
+  .grid-layout-auto[data-count="10"] .stream-card-footer,
+  .layout-3x2 .stream-card-footer,
+  .layout-3x3 .stream-card-footer {
+    padding: 0.2rem 0.45rem !important;
+    min-height: 28px !important;
+    max-height: 30px !important;
+    gap: 0.2rem !important;
   }
 
   .grid-layout-auto[data-count="5"] .stream-vol-slider,
   .grid-layout-auto[data-count="6"] .stream-vol-slider,
-  .layout-3x2 .stream-vol-slider {
-    width: 40px !important;
-  }
-
-  /* 7, 8, & 9 Streams (3 baris x 3 kolom = Maksimal 9 Member Sekaligus di 1 Tampilan Tanpa Scroll):
-     Sama persis seperti tampilan zoom out 35% namun aktif di zoom normal 100% */
-  .grid-layout-auto[data-count="7"],
-  .grid-layout-auto[data-count="8"],
-  .grid-layout-auto[data-count="9"],
-  .layout-3x3,
-  .layout-3x2[data-count="7"],
-  .layout-3x2[data-count="8"],
-  .layout-3x2[data-count="9"] {
-    display: grid !important;
-    grid-template-columns: repeat(3, minmax(0, 240px)) !important;
-    justify-content: center !important;
-    align-content: center !important;
-    gap: 0.45rem !important;
-    width: 100% !important;
-    max-width: 780px !important;
-    margin: 0 auto !important;
-  }
-
-  .grid-layout-auto[data-count="7"] .stream-card,
-  .grid-layout-auto[data-count="8"] .stream-card,
-  .grid-layout-auto[data-count="9"] .stream-card,
-  .layout-3x3 .stream-card,
-  .layout-3x2[data-count="7"] .stream-card,
-  .layout-3x2[data-count="8"] .stream-card,
-  .layout-3x2[data-count="9"] .stream-card {
-    width: 100% !important;
-    max-width: 240px !important;
-    height: calc((100vh - 120px) / 3) !important;
-    height: calc((100dvh - 120px) / 3) !important;
-    max-height: calc((100vh - 120px) / 3) !important;
-    max-height: calc((100dvh - 120px) / 3) !important;
-    display: flex !important;
-    flex-direction: column !important;
-    justify-content: space-between !important;
-    margin: 0 auto !important;
-    border-radius: 0.75rem !important;
-  }
-
-  .grid-layout-auto[data-count="7"] .stream-video-container,
-  .grid-layout-auto[data-count="8"] .stream-video-container,
-  .grid-layout-auto[data-count="9"] .stream-video-container,
-  .layout-3x3 .stream-video-container,
-  .layout-3x2[data-count="7"] .stream-video-container,
-  .layout-3x2[data-count="8"] .stream-video-container,
-  .layout-3x2[data-count="9"] .stream-video-container {
-    flex: 1 1 auto !important;
-    width: 100% !important;
-    height: calc(((100vh - 120px) / 3) - 52px) !important;
-    height: calc(((100dvh - 120px) / 3) - 52px) !important;
-    max-height: calc(((100vh - 120px) / 3) - 52px) !important;
-    max-height: calc(((100dvh - 120px) / 3) - 52px) !important;
-    aspect-ratio: 9 / 16 !important;
-    margin: 0 auto !important;
-  }
-
-  .grid-layout-auto[data-count="7"] .stream-card-header,
-  .grid-layout-auto[data-count="8"] .stream-card-header,
-  .grid-layout-auto[data-count="9"] .stream-card-header,
-  .layout-3x3 .stream-card-header,
-  .layout-3x2[data-count="7"] .stream-card-header,
-  .layout-3x2[data-count="8"] .stream-card-header,
-  .layout-3x2[data-count="9"] .stream-card-header {
-    padding: 0.15rem 0.35rem !important;
-    gap: 0.15rem !important;
-    flex-shrink: 0 !important;
-    min-height: 24px !important;
-    max-height: 26px !important;
-  }
-
-  .grid-layout-auto[data-count="7"] .card-header-btn,
-  .grid-layout-auto[data-count="8"] .card-header-btn,
-  .grid-layout-auto[data-count="9"] .card-header-btn,
-  .layout-3x3 .card-header-btn,
-  .layout-3x2[data-count="7"] .card-header-btn,
-  .layout-3x2[data-count="8"] .card-header-btn,
-  .layout-3x2[data-count="9"] .card-header-btn {
-    padding: 0.15rem 0.3rem !important;
-    font-size: 8.5px !important;
-    border-radius: 0.35rem !important;
-    gap: 0.15rem !important;
-  }
-
-  .grid-layout-auto[data-count="7"] .stream-card-footer,
-  .grid-layout-auto[data-count="8"] .stream-card-footer,
-  .grid-layout-auto[data-count="9"] .stream-card-footer,
-  .layout-3x3 .stream-card-footer,
-  .layout-3x2[data-count="7"] .stream-card-footer,
-  .layout-3x2[data-count="8"] .stream-card-footer,
-  .layout-3x2[data-count="9"] .stream-card-footer {
-    padding: 0.15rem 0.35rem !important;
-    flex-shrink: 0 !important;
-    min-height: 24px !important;
-    max-height: 26px !important;
-  }
-
   .grid-layout-auto[data-count="7"] .stream-vol-slider,
   .grid-layout-auto[data-count="8"] .stream-vol-slider,
   .grid-layout-auto[data-count="9"] .stream-vol-slider,
-  .layout-3x3 .stream-vol-slider,
-  .layout-3x2[data-count="7"] .stream-vol-slider,
-  .layout-3x2[data-count="8"] .stream-vol-slider,
-  .layout-3x2[data-count="9"] .stream-vol-slider {
-    width: 32px !important;
+  .grid-layout-auto[data-count="10"] .stream-vol-slider,
+  .layout-3x2 .stream-vol-slider,
+  .layout-3x3 .stream-vol-slider {
+    width: 38px !important;
   }
 
   /* Explicit Grid Presets */
@@ -831,6 +832,39 @@ html, body {
 :-webkit-full-screen .layout-1x1 .stream-video-container {
   height: calc(100vh - 115px) !important;
   max-height: calc(100vh - 115px) !important;
+}
+
+/* 2-Row Fullscreen (5 columns per row) */
+:fullscreen .grid-layout-auto[data-count="6"] .stream-card,
+:fullscreen .grid-layout-auto[data-count="7"] .stream-card,
+:fullscreen .grid-layout-auto[data-count="8"] .stream-card,
+:fullscreen .grid-layout-auto[data-count="9"] .stream-card,
+:fullscreen .grid-layout-auto[data-count="10"] .stream-card,
+:fullscreen .layout-3x2 .stream-card,
+:-webkit-full-screen .grid-layout-auto[data-count="6"] .stream-card,
+:-webkit-full-screen .grid-layout-auto[data-count="7"] .stream-card,
+:-webkit-full-screen .grid-layout-auto[data-count="8"] .stream-card,
+:-webkit-full-screen .grid-layout-auto[data-count="9"] .stream-card,
+:-webkit-full-screen .grid-layout-auto[data-count="10"] .stream-card,
+:-webkit-full-screen .layout-3x2 .stream-card {
+  height: calc((100vh - 40px) / 2) !important;
+  max-height: calc((100vh - 40px) / 2) !important;
+}
+
+:fullscreen .grid-layout-auto[data-count="6"] .stream-video-container,
+:fullscreen .grid-layout-auto[data-count="7"] .stream-video-container,
+:fullscreen .grid-layout-auto[data-count="8"] .stream-video-container,
+:fullscreen .grid-layout-auto[data-count="9"] .stream-video-container,
+:fullscreen .grid-layout-auto[data-count="10"] .stream-video-container,
+:fullscreen .layout-3x2 .stream-video-container,
+:-webkit-full-screen .grid-layout-auto[data-count="6"] .stream-video-container,
+:-webkit-full-screen .grid-layout-auto[data-count="7"] .stream-video-container,
+:-webkit-full-screen .grid-layout-auto[data-count="8"] .stream-video-container,
+:-webkit-full-screen .grid-layout-auto[data-count="9"] .stream-video-container,
+:-webkit-full-screen .grid-layout-auto[data-count="10"] .stream-video-container,
+:-webkit-full-screen .layout-3x2 .stream-video-container {
+  height: calc(((100vh - 40px) / 2) - 58px) !important;
+  max-height: calc(((100vh - 40px) / 2) - 58px) !important;
 }
 
 /* Companion Panel */

@@ -1410,7 +1410,7 @@ function applyLayout(layoutName, count) {
   }
   // Set base grid layout classes
   grid.className = 'w-full max-w-7xl mx-auto grid gap-3 transition-all';
-  grid.setAttribute('data-count', Math.min(count, 9));
+  grid.setAttribute('data-count', Math.min(count, 10));
 
   if (layoutName === 'auto') {
     grid.classList.add('grid-layout-auto');
